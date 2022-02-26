@@ -1,7 +1,5 @@
-import { Contianer } from './MainStyled';
-
 const MainPresenter = () => {
-    return <div></div>;
+    return <div>sdfsdf</div>;
 };
 
 export default MainPresenter;

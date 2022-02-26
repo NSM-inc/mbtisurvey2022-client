@@ -1,10 +1,12 @@
-import { Layout } from '../../components/layout';
+import { Layout, Template } from '../../components/layout';
 import MainPresenter from '../../components/main/MainPresenter';
 
 const MainPage = function () {
     return (
         <Layout showHeader={false} showFooter={false}>
-            <MainPresenter />
+            <Template>
+                <MainPresenter />
+            </Template>
         </Layout>
     );
 };

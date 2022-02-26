@@ -1,4 +1,6 @@
-import { ContentsContainer, Footer, Header } from '.';
+import styled from '@emotion/styled';
+import { Footer, Header } from '.';
+import COLOR from '../../assets/consts/color';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -7,6 +9,11 @@ interface LayoutProps {
     showNav?: Boolean;
 }
 
+const Container = styled.div`
+    background: ${COLOR.DARKGRAY};
+    color: ${COLOR.WHITE};
+`;
+
 const Layout = ({
     children,
     showHeader = true,
@@ -14,13 +21,11 @@ const Layout = ({
     showNav = true,
 }: LayoutProps) => {
     return (
-        <div>
+        <Container>
             {showHeader && <Header />}
-            <ContentsContainer showHeader={showHeader} showFooter={showFooter}>
-                {children}
-            </ContentsContainer>
+            {children}
             {showFooter && <Footer />}
-        </div>
+        </Container>
     );
 };
 

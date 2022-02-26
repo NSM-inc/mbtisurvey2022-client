@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { Image } from '../common';
-import COLOR from '../../assets/consts/color';
 import { ArrowHeader } from '../../assets/icons';
 import { useLocalStorage } from '../../util/useLocalStorage';
 
@@ -8,11 +7,10 @@ const Container = styled.div`
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    background: ${COLOR.DARKGRAY};
-    color: ${COLOR.WHITE};
     padding: 32px;
     font-size: 28px;
     height: 96px;
+    background: transparent;
 `;
 
 const Header = () => {

@@ -1,6 +1,6 @@
 import Header from '../layout/Header';
 import Footer from '../layout/Footer';
-import ContentsContainer from './ContentsContainer';
+import Template from './Template';
 import Layout from './Layout';
 
-export { Header, Footer, ContentsContainer, Layout };
+export { Header, Footer, Template, Layout };
