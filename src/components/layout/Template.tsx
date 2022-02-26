@@ -3,7 +3,6 @@ import React from 'react';
 
 interface ContentsContainerProps {
     children: React.ReactNode;
-    boxStyle?: React.CSSProperties;
 }
 
 const Container = styled.div`
@@ -14,20 +13,11 @@ const Container = styled.div`
     justify-content: center;
 `;
 
-const Box = styled.div`
-    max-width: 1000px;
-`;
-
 const Template = ({
     children,
-    boxStyle,
     ...containerStyle
 }: ContentsContainerProps & React.CSSProperties) => {
-    return (
-        <Container style={{ ...containerStyle }}>
-            <Box style={{ ...boxStyle }}>{children}</Box>
-        </Container>
-    );
+    return <Container style={{ ...containerStyle }} />;
 };
 
 export default Template;
