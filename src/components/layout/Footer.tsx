@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import COLOR from '../../assets/consts/color';
 import { Logo } from '../../assets/icons';
-import Image from './Image';
+import Image from '../common/Image';
 
 const Container = styled.div`
     display: flex;

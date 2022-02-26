@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Image } from '.';
+import { Image } from '../common';
 import COLOR from '../../assets/consts/color';
 import { ArrowHeader } from '../../assets/icons';
 import { useLocalStorage } from '../../util/useLocalStorage';
