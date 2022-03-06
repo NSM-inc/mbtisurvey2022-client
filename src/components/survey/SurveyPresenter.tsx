@@ -8,10 +8,13 @@ import RadioButton from '../common/RadioButton';
 import SelectBox from '../common/SelectBox';
 
 import { Color, ColorResult, SliderPicker } from 'react-color';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '../common/Button';
-import { useRecoilState } from 'recoil';
-import { CurrentSurveyStepState } from '../../recoil/atoms';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import {
+    CurrentSurveyStepState,
+    IsShowProcessPercentState,
+} from '../../recoil/atoms';
 import COLOR from '../../assets/consts/color';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import SurveyReqBodyDto from '../../models/SurveyReqBodyDto';
@@ -22,8 +25,7 @@ import LoveDto from '../../models/SurveyReqBodyDto/LoveDto';
 import EtcDto from '../../models/SurveyReqBodyDto/EtcDto';
 import ResidenceDto from '../../models/SurveyReqBodyDto/ResidenceDto';
 import WorkDto from '../../models/SurveyReqBodyDto/WorkDto';
-import { ApiError } from 'next/dist/server/api-utils';
-import axios from 'axios';
+import api from '../../util/api';
 
 // interface SurveyPresenterProps {}
 
@@ -31,6 +33,9 @@ const SurveyPresenter = function () {
     const [favoriteColor, setFavoriteColor] = useState<Color>();
     const [currentSurveyStep, setCurrentSurveyStep] = useRecoilState(
         CurrentSurveyStepState,
+    );
+    const setIsShowProcessPercent = useSetRecoilState(
+        IsShowProcessPercentState,
     );
     const [mbti, setMbti] = useState<{
         ei: '·' | 'E' | 'I';
@@ -50,6 +55,11 @@ const SurveyPresenter = function () {
             WorkDto
     >();
 
+    useEffect(() => {
+        setIsShowProcessPercent(true);
+        return () => setIsShowProcessPercent(false);
+    }, []);
+
     const handleFavoriteColorChange = (color: ColorResult) => {
         setValue('personalColor', color.hex);
         setFavoriteColor(color.hex);
@@ -65,8 +75,13 @@ const SurveyPresenter = function () {
     };
 
     const handleFinalSubmit = async function () {
-        // await axios.post()
-        return;
+        try {
+            await api({
+                method: 'post',
+                url: '/survey',
+                data: surveyData,
+            });
+        } catch {}
     };
 
     const surveySlide = [
@@ -590,7 +605,7 @@ const SurveyPresenter = function () {
                 css={css`
                     margin-top: 100px;
                 `}
-                onClick={handleSubmit}
+                onClick={handleFinalSubmit}
             >
                 제출
             </Button>

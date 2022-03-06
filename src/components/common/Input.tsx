@@ -30,9 +30,10 @@ const StyledInput = styled.input`
 `;
 
 export default function Input({
+    register,
     ...attrs
 }: InputHTMLAttributes<HTMLInputElement> & {
     register?: UseFormRegisterReturn;
 }) {
-    return <StyledInput {...attrs} {...attrs.register} />;
+    return <StyledInput {...attrs} {...register} />;
 }

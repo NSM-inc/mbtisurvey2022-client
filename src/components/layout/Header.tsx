@@ -1,7 +1,10 @@
 import styled from '@emotion/styled';
 import { Image } from '../common';
 import { ArrowHeader } from '../../assets/icons';
-import { CurrentSurveyStepState } from '../../recoil/atoms';
+import {
+    CurrentSurveyStepState,
+    IsShowProcessPercentState,
+} from '../../recoil/atoms';
 import { useRecoilValue } from 'recoil';
 import { isMobile, isTablet } from '../../assets/consts/mediaQuery';
 
@@ -27,11 +30,16 @@ const Container = styled.div`
 
 const Header = () => {
     const currentSurveyStep = useRecoilValue(CurrentSurveyStepState);
+    const isShowProcessPercent = useRecoilValue(IsShowProcessPercentState);
 
     return (
         <Container>
             <Image src={ArrowHeader} width="136px" height="32px" alt="arrow" />
-            <span>{((Number(currentSurveyStep) / 6) * 100).toFixed(0)}%</span>
+            {isShowProcessPercent && (
+                <span>
+                    {((Number(currentSurveyStep) / 6) * 100).toFixed(0)}%
+                </span>
+            )}
         </Container>
     );
 };
