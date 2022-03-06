@@ -34,5 +34,5 @@ export default function Input({
 }: InputHTMLAttributes<HTMLInputElement> & {
     register?: UseFormRegisterReturn;
 }) {
-    return <StyledInput {...attrs} />;
+    return <StyledInput {...attrs} {...attrs.register} />;
 }

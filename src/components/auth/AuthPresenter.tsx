@@ -66,9 +66,9 @@ const AuthPresenter = ({
                                         },
                                     })}
                                 />
-                                {/* {errors['phone']?.type === 'required' && (
+                                {errors['phone']?.type === 'required' && (
                                     <div>전화번호를 입력해주세요.</div>
-                                )} */}
+                                )}
                             </div>
                             <div>
                                 <Input
