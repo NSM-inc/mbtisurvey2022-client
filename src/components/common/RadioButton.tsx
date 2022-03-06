@@ -24,7 +24,7 @@ const StyledInput = styled.input`
         border-radius: 50%;
         transition: 0.25s;
         ${isMobile} {
-            font-size: 18px;
+            font-size: 20px;
         }
     }
 
