@@ -33,7 +33,9 @@ const AuthContainer = () => {
             .confirm(data['authNumber'])
             .then((result: any) => {
                 alert('인증이 완료되었습니다.');
-                console.log(result.user, result);
+                if (result.user.accessToken) {
+                    console.log('accessToken', result.user.accessToken);
+                }
             })
             .catch((error: any) => {
                 if (error.code === 'auth/invalid-verification-code') {
@@ -47,18 +49,20 @@ const AuthContainer = () => {
     };
 
     useEffect(() => {
-        const appVerifier = new RecaptchaVerifier(
-            'sign-in-button',
-            {
-                size: 'invisible',
-                callback: (response: any) => {
-                    // reCAPTCHA solved, allow signInWithPhoneNumber.
+        if (!window.recaptchaVerifier && auth) {
+            window.recaptchaVerifier = new RecaptchaVerifier(
+                'sign-in-button',
+                {
+                    size: 'invisible',
+                    callback: (response: any) => {
+                        // reCAPTCHA solved, allow signInWithPhoneNumber.
+                        console.log('response', response);
+                    },
                 },
-            },
-            auth,
-        );
-        window.recaptchaVerifier = appVerifier;
-    }, []);
+                auth,
+            );
+        }
+    }, [auth]);
 
     return (
         <AuthPresenter
