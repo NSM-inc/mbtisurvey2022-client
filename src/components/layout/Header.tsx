@@ -3,18 +3,26 @@ import { Image } from '../common';
 import { ArrowHeader } from '../../assets/icons';
 import { CurrentSurveyStepState } from '../../recoil/atoms';
 import { useRecoilValue } from 'recoil';
+import { isMobile, isTablet } from '../../assets/consts/mediaQuery';
 
 const Container = styled.div`
     position: fixed;
     top: 0;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
-    padding: 32px;
+    padding: 0 32px;
     font-size: 28px;
     width: 100%;
     height: 96px;
     background: transparent;
+
+    ${isTablet} {
+        height: 77px;
+    }
+    ${isMobile} {
+        height: 58px;
+    }
 `;
 
 const Header = () => {

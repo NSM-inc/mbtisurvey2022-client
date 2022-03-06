@@ -2,7 +2,7 @@ import { keyframes, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import COLOR from '../../assets/consts/color';
 
-import { isDesktop } from '../../assets/consts/mediaQuery';
+import { isDesktop, isMobile, isTablet } from '../../assets/consts/mediaQuery';
 
 export const Contianer = styled.div`
     background: ${COLOR.DARKGRAY};
@@ -19,6 +19,10 @@ export const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+
+    ${isMobile} {
+        height: initial;
+    }
 `;
 
 export const Description = styled.div`
@@ -27,6 +31,12 @@ export const Description = styled.div`
     width: 50%;
     padding: 96px;
     font-size: 18px;
+
+    ${isMobile} {
+        width: 100%;
+        padding: 24px;
+        z-index: 2;
+    }
 `;
 
 export const Types = styled.div`
@@ -38,17 +48,34 @@ export const Types = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 70px;
+
+    ${isMobile} {
+        display: none;
+    }
 `;
 
 export const Title = styled.div`
     font-family: Montserrat;
     font-weight: 300;
-    height: 200px;
     text-align: left;
     margin: 0 0 16px -23px;
 
     ${isDesktop} {
         font-size: 200px;
+        height: 200px;
+    }
+
+    ${isTablet} {
+        font-size: 77px;
+        height: 77px;
+        margin-left: -9px;
+    }
+
+    ${isMobile} {
+        font-size: 100px;
+        height: 122px;
+        margin-left: -9px;
+        margin-bottom: 0px;
     }
 `;
 
@@ -65,7 +92,13 @@ export const SubTitle = styled.div`
 export const Intro = styled.div`
     line-height: 28px;
     margin-bottom: 34px;
-    width: 600px;
+    width: 100%;
+    max-width: 600px;
+
+    ${isMobile} {
+        font-size: 14px;
+        line-height: 24px;
+    }
 `;
 
 export const TypesBox = styled.div`
@@ -93,6 +126,11 @@ export const Display = styled.div`
     z-index: 1;
     overflow-x: hidden;
     overflow-y: hidden;
+
+    ${isMobile} {
+        width: 100%;
+        left: 0;
+    }
 `;
 
 const getRandomNum = (num: number) => {

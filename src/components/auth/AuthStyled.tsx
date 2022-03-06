@@ -1,7 +1,12 @@
 import styled from '@emotion/styled';
-import { isDesktop, isMobile } from '../../assets/consts/mediaQuery';
+import { isDesktop, isMobile, isTablet } from '../../assets/consts/mediaQuery';
 
 export const Container = styled.div`
+    ${isMobile} {
+        padding: 0 32px;
+        margin-top: 40px;
+    }
+
     ${isDesktop} {
         display: flex;
         align-items: center;
@@ -9,7 +14,8 @@ export const Container = styled.div`
 `;
 
 export const Title = styled.div`
-    width: 440px;
+    width: 100%;
+    max-width: 440px;
     margin-bottom: 32px;
     font-size: 40px;
     font-weight: 400;
@@ -17,10 +23,15 @@ export const Title = styled.div`
     > div {
         line-height: 48px;
     }
+
+    ${isMobile} {
+        font-size: 28px;
+    }
 `;
 
 export const InputBox = styled.div`
-    width: 440px;
+    width: 100%;
+    max-width: 440px;
 
     > div {
         margin-bottom: 32px;
@@ -46,7 +57,12 @@ export const Time = styled.div`
         height: 100%;
         right: -10px;
         ${isDesktop} {
-            width: 500px;
+            width: 100%;
+            max-width: 500px;
+        }
+        ${isTablet} {
+            width: 100%;
+            max-width: 440px;
         }
         ${isMobile} {
             width: 254px;

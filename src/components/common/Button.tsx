@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import COLOR from '../../assets/consts/color';
+import { isMobile } from '../../assets/consts/mediaQuery';
 
 const Button = styled.button`
     width: 300px;
@@ -11,6 +12,12 @@ const Button = styled.button`
     font-weight: normal;
     color: ${COLOR.WHITE};
     cursor: pointer;
+
+    ${isMobile} {
+        width: 200px;
+        height: 54px;
+        font-size: 20px;
+    }
 `;
 
 export default Button;

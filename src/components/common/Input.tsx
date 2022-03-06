@@ -2,9 +2,11 @@ import styled from '@emotion/styled';
 import { InputHTMLAttributes } from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 import COLOR from '../../assets/consts/color';
+import { isMobile } from '../../assets/consts/mediaQuery';
 
 const StyledInput = styled.input`
-    width: 356px;
+    width: 100%;
+    max-width: 356px;
     height: 65px;
     background: transparent;
     border: 0;
@@ -19,6 +21,11 @@ const StyledInput = styled.input`
     }
     ::placeholder {
         color: ${COLOR.WHITE50};
+    }
+
+    ${isMobile} {
+        height: 56px;
+        font-size: 28px;
     }
 `;
 

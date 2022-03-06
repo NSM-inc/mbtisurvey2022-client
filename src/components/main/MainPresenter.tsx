@@ -15,16 +15,25 @@ import {
     TypesBox,
 } from './MainStyled';
 import { ArrowHeader } from '../../assets/icons';
+import { useWindowSize } from '../../util/useWindowSize';
+import { css } from '@emotion/react';
+import { isMobile } from '../../assets/consts/mediaQuery';
 
 const MainPresenter = () => {
     const router = useRouter();
+    const { width } = useWindowSize();
+    const isMobileSize = (width || 0) < 480;
 
     return (
         <Container>
             <Description>
                 <Title>MBTI</Title>
                 <div
-                    css={{ border: `2px solid ${COLOR.WHITE}`, width: '465px' }}
+                    css={{
+                        border: `2px solid ${COLOR.WHITE}`,
+                        maxWidth: '465px',
+                        width: '100%',
+                    }}
                 />
                 <SubTitle>SURVEY 2022</SubTitle>
                 <Intro>
@@ -44,8 +53,29 @@ const MainPresenter = () => {
                         이 서베이를 통해 중복이 없는 최신의 통계 자료를 만들어
                         봅시다!
                     </div>
+                    {isMobileSize && (
+                        <div
+                            css={css`
+                                margin-top: 38px;
+                            `}
+                        >
+                            <Image
+                                src={ArrowHeader}
+                                width="92px"
+                                height="22px"
+                                alt="arrow"
+                            />
+                        </div>
+                    )}
                 </Intro>
-                <Button onClick={() => router.push('/auth')}>
+                <Button
+                    css={css`
+                        ${isMobile} {
+                            margin: 0 auto;
+                        }
+                    `}
+                    onClick={() => router.push('/auth')}
+                >
                     시작합니다!
                 </Button>
             </Description>
@@ -97,7 +127,7 @@ const MainPresenter = () => {
                     }}
                 >
                     <Circle
-                        size={190}
+                        size={isMobileSize ? 111 : 190}
                         top={15}
                         left={20}
                         shadow={`0px 0px 60px 0px ${COLOR.REDSHADOW80}`}
@@ -105,7 +135,7 @@ const MainPresenter = () => {
                         endColor={COLOR.DEEPYELLOW}
                     />
                     <Circle
-                        size={332}
+                        size={isMobileSize ? 194 : 332}
                         top={20}
                         left={50}
                         shadow={`0px 0px 80px 0px ${COLOR.GREENSHADOW80}`}
@@ -113,7 +143,7 @@ const MainPresenter = () => {
                         endColor={COLOR.BLUEGREEN}
                     />
                     <Circle
-                        size={300}
+                        size={isMobileSize ? 180 : 300}
                         top={45}
                         left={65}
                         shadow={`0px 0px 80px 0px ${COLOR.PURPLESHADOW}`}
@@ -122,7 +152,7 @@ const MainPresenter = () => {
                         endColor={COLOR.PURPLE}
                     />
                     <Circle
-                        size={194}
+                        size={isMobileSize ? 113 : 194}
                         top={60}
                         left={30}
                         shadow={`0px 0px 50px 0px ${COLOR.BLUESHADOW80}`}
