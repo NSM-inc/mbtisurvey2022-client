@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { UseFormRegisterReturn } from 'react-hook-form';
 import COLOR from '../../assets/consts/color';
+import { isMobile } from '../../assets/consts/mediaQuery';
 
 const StyledSelect = styled.select`
     width: 356px;
@@ -18,6 +19,10 @@ const StyledSelect = styled.select`
     }
     ::placeholder {
         color: ${COLOR.WHITE50};
+    }
+    ${isMobile} {
+        width: 100%;
+        font-size: 28px;
     }
 `;
 

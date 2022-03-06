@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import React from 'react';
 import { UseFormRegisterReturn } from 'react-hook-form';
 import COLOR from '../../assets/consts/color';
+import { isMobile } from '../../assets/consts/mediaQuery';
 import Flex from './Flex';
 
 const StyledInput = styled.input`
@@ -22,6 +23,9 @@ const StyledInput = styled.input`
         user-select: none;
         border-radius: 50%;
         transition: 0.25s;
+        ${isMobile} {
+            font-size: 18px;
+        }
     }
 
     & + label:before {

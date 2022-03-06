@@ -26,6 +26,8 @@ import EtcDto from '../../models/SurveyReqBodyDto/EtcDto';
 import ResidenceDto from '../../models/SurveyReqBodyDto/ResidenceDto';
 import WorkDto from '../../models/SurveyReqBodyDto/WorkDto';
 import api from '../../util/api';
+import { isMobile } from '../../assets/consts/mediaQuery';
+import { useWindowSize } from '../../util/useWindowSize';
 
 // interface SurveyPresenterProps {}
 
@@ -54,6 +56,9 @@ const SurveyPresenter = function () {
             UsersDto &
             WorkDto
     >();
+
+    const { width } = useWindowSize();
+    const isMobileSize = (width || 0) < 480;
 
     useEffect(() => {
         setIsShowProcessPercent(true);
@@ -89,6 +94,9 @@ const SurveyPresenter = function () {
             <h1
                 css={css`
                     margin-bottom: 70px;
+                    ${isMobile} {
+                        margin-bottom: 30px;
+                    }
                 `}
             >
                 나의 MBTI는
@@ -96,6 +104,7 @@ const SurveyPresenter = function () {
             <div
                 css={css`
                     display: flex;
+                    justify-content: center;
                     & > button {
                         width: 82px;
                         height: 146px;
@@ -106,10 +115,16 @@ const SurveyPresenter = function () {
                         display: flex;
                         justify-content: center;
                         align-items: flex-start;
+                        cursor: pointer;
                         &:not(:last-child) {
                             margin-right: 70px;
                         }
-                        cursor: pointer;
+                        ${isMobile} {
+                            width: 60px;
+                            &:not(:last-child) {
+                                margin-right: 20px;
+                            }
+                        }
                     }
                     & > button > span {
                         background-clip: text;
@@ -120,6 +135,10 @@ const SurveyPresenter = function () {
                         font-weight: 900;
                         font-style: normal;
                         line-height: 146px;
+                        ${isMobile} {
+                            font-size: 90px;
+                            line-height: 176px;
+                        }
                     }
                 `}
             >
@@ -258,7 +277,7 @@ const SurveyPresenter = function () {
                         { value: 'female', text: '여성' },
                         { value: 'mtf', text: 'MTF' },
                     ]}
-                    itemWidth="100px"
+                    itemWidth={isMobileSize ? '80px' : '100px'}
                     register={register('gender')}
                 />
                 <RadioButtons
@@ -288,6 +307,9 @@ const SurveyPresenter = function () {
             <Button
                 css={css`
                     margin-top: 100px;
+                    ${isMobile} {
+                        margin-top: 30px;
+                    }
                 `}
                 onClick={handleClickNext}
             >
@@ -302,12 +324,12 @@ const SurveyPresenter = function () {
                         { value: 'android', text: '안드로이드' },
                         { value: 'ios', text: 'iOS' },
                     ]}
-                    itemWidth="150px"
+                    itemWidth={isMobileSize ? '120px' : '150px'}
                     register={register('smartphoneOS')}
                 />
                 <RadioButtons
                     items={[{ value: 'etc', text: '기타' }]}
-                    itemWidth="150px"
+                    itemWidth={isMobileSize ? '120px' : '150px'}
                     register={register('smartphoneOS')}
                 />
             </QuestionContainer>
@@ -318,7 +340,7 @@ const SurveyPresenter = function () {
                         { value: 'bosu', text: '보수' },
                         { value: 'jinbo', text: '진보' },
                     ]}
-                    itemWidth="150px"
+                    itemWidth={isMobileSize ? '120px' : '150px'}
                     register={register('politics')}
                 />
                 <RadioButtons
@@ -326,7 +348,7 @@ const SurveyPresenter = function () {
                         { value: 'mid', text: '중도' },
                         { value: 'no', text: '관심없음' },
                     ]}
-                    itemWidth="150px"
+                    itemWidth={isMobileSize ? '120px' : '150px'}
                     register={register('politics')}
                 />
             </QuestionContainer>
@@ -353,6 +375,9 @@ const SurveyPresenter = function () {
             <Button
                 css={css`
                     margin-top: 100px;
+                    ${isMobile} {
+                        margin-top: 30px;
+                    }
                 `}
                 onClick={handleClickNext}
             >
@@ -392,6 +417,9 @@ const SurveyPresenter = function () {
             <Button
                 css={css`
                     margin-top: 100px;
+                    ${isMobile} {
+                        margin-top: 30px;
+                    }
                 `}
                 onClick={handleClickNext}
             >
@@ -406,7 +434,7 @@ const SurveyPresenter = function () {
                         { value: 'yes', text: '예' },
                         { value: 'no', text: '아니오' },
                     ]}
-                    itemWidth="150px"
+                    itemWidth={isMobileSize ? '120px' : '150px'}
                     register={register('isEmployed')}
                 />
             </QuestionContainer>
@@ -467,6 +495,9 @@ const SurveyPresenter = function () {
             <Button
                 css={css`
                     margin-top: 100px;
+                    ${isMobile} {
+                        margin-top: 30px;
+                    }
                 `}
                 onClick={handleClickNext}
             >
@@ -486,7 +517,7 @@ const SurveyPresenter = function () {
                         { value: 'same', text: '동성' },
                         { value: 'both', text: '양성' },
                     ]}
-                    itemWidth="100px"
+                    itemWidth={isMobileSize ? '80px' : '100px'}
                     register={register('isLoveTarget')}
                 />
             </QuestionContainer>
@@ -543,6 +574,9 @@ const SurveyPresenter = function () {
             <Button
                 css={css`
                     margin-top: 100px;
+                    ${isMobile} {
+                        margin-top: 30px;
+                    }
                 `}
                 onClick={handleClickNext}
             >
@@ -567,7 +601,7 @@ const SurveyPresenter = function () {
                         { value: 'jug', text: '정글' },
                         { value: 'mid', text: '미드' },
                     ]}
-                    itemWidth="100px"
+                    itemWidth={isMobileSize ? '80px' : '100px'}
                     register={register('leagueOfLegendsPosition')}
                 />
                 <RadioButtons
@@ -604,6 +638,9 @@ const SurveyPresenter = function () {
             <Button
                 css={css`
                     margin-top: 100px;
+                    ${isMobile} {
+                        margin-top: 30px;
+                    }
                 `}
                 onClick={handleFinalSubmit}
             >
@@ -718,8 +755,12 @@ const SurveyPresenter = function () {
                         key={idx}
                         css={css`
                             display: ${idx === currentSurveyStep
-                                ? 'block'
+                                ? 'flex'
                                 : 'none'};
+                            flex-direction: column;
+                            ${isMobile} {
+                                align-items: center;
+                            }
                         `}
                     >
                         {elem}
@@ -777,6 +818,9 @@ const Item = styled.div`
     :not(:last-child) {
         margin-right: 20px;
     }
+    ${isMobile} {
+        margin-right: 10px;
+    }
 `;
 
 const QuestionContainer = function ({
@@ -791,6 +835,9 @@ const QuestionContainer = function ({
                 display: flex;
                 flex-direction: column;
                 margin-bottom: 80px;
+                ${isMobile} {
+                    padding: 0 20px;
+                }
             `}
         >
             {children}
