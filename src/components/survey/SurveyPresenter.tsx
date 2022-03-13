@@ -6,17 +6,15 @@ import Input from '../common/Input';
 import SelectBox from '../common/SelectBox';
 
 import { Color, ColorResult, SliderPicker } from 'react-color';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from '../common/Button';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
-    AuthState,
     CurrentSurveyStepState,
     IsShowProcessPercentState,
 } from '../../recoil/atoms';
 import COLOR from '../../assets/consts/color';
 import { useForm } from 'react-hook-form';
-import SurveyReqBodyDto from '../../models/SurveyReqBodyDto';
 import UsersDto from '../../models/SurveyReqBodyDto/UsersDto';
 import AlcoholDto from '../../models/SurveyReqBodyDto/AlcoholDto';
 import CommonDto from '../../models/SurveyReqBodyDto/CommonDto';
@@ -24,15 +22,24 @@ import LoveDto from '../../models/SurveyReqBodyDto/LoveDto';
 import EtcDto from '../../models/SurveyReqBodyDto/EtcDto';
 import ResidenceDto from '../../models/SurveyReqBodyDto/ResidenceDto';
 import WorkDto from '../../models/SurveyReqBodyDto/WorkDto';
-import api from '../../util/api';
 import { isMobile } from '../../assets/consts/mediaQuery';
 import { useWindowSize } from '../../util/useWindowSize';
 import RadioButtons from '../common/RadioButtons';
 import YNRadioButton from '../common/YNRadioButton';
 
-// interface SurveyPresenterProps {}
+interface SurveyPresenterProps {
+    onSubmit: (
+        data: AlcoholDto &
+            CommonDto &
+            EtcDto &
+            LoveDto &
+            ResidenceDto &
+            UsersDto &
+            WorkDto,
+    ) => Promise<void>;
+}
 
-const SurveyPresenter = function () {
+const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
     const [favoriteColor, setFavoriteColor] = useState<Color>();
     const [currentSurveyStep, setCurrentSurveyStep] = useRecoilState(
         CurrentSurveyStepState,
@@ -46,9 +53,19 @@ const SurveyPresenter = function () {
         ft: '·' | 'F' | 'T';
         pj: '·' | 'P' | 'J';
     }>({ ei: '·', ns: '·', ft: '·', pj: '·' });
-    const authState = useRecoilValue(AuthState);
+    const [errors, setErrors] = useState<{
+        [K in keyof (AlcoholDto &
+            CommonDto &
+            EtcDto &
+            LoveDto &
+            ResidenceDto &
+            UsersDto &
+            WorkDto)]?: 'required' | 'range';
+    }>();
 
-    const { register, handleSubmit, setValue, watch } = useForm<
+    const favoriteColorRef = useRef<HTMLDivElement>(null);
+
+    const { register, handleSubmit, setValue, watch, setFocus } = useForm<
         AlcoholDto &
             CommonDto &
             EtcDto &
@@ -57,6 +74,67 @@ const SurveyPresenter = function () {
             UsersDto &
             WorkDto
     >();
+
+    useEffect(() => {
+        watch('gender') &&
+            setErrors((prev) => ({ ...prev, gender: undefined }));
+        watch('birth') && setErrors((prev) => ({ ...prev, birth: undefined }));
+        watch('personalColor') &&
+            setErrors((prev) => ({ ...prev, personalColor: undefined }));
+        watch('hobby') && setErrors((prev) => ({ ...prev, hobby: undefined }));
+        watch('smartphoneOS') &&
+            setErrors((prev) => ({ ...prev, smartphoneOS: undefined }));
+        watch('politics') &&
+            setErrors((prev) => ({ ...prev, politics: undefined }));
+        watch('religion') &&
+            setErrors((prev) => ({ ...prev, religion: undefined }));
+        watch('isEmployed') &&
+            setErrors((prev) => ({ ...prev, isEmployed: undefined }));
+        watch('job') && setErrors((prev) => ({ ...prev, job: undefined }));
+        watch('income') &&
+            setErrors((prev) => ({ ...prev, income: undefined }));
+        watch('firstWorkYear') &&
+            setErrors((prev) => ({ ...prev, firstWorkYear: undefined }));
+        watch('alcoholPerOnce') &&
+            setErrors((prev) => ({ ...prev, alcoholPerOnce: undefined }));
+        watch('alcoholPerWeek') &&
+            setErrors((prev) => ({ ...prev, alcoholPerWeek: undefined }));
+        watch('favoriteAlcohol') &&
+            setErrors((prev) => ({ ...prev, favoriteAlcohol: undefined }));
+        watch('loveCount') &&
+            setErrors((prev) => ({ ...prev, loveCount: undefined }));
+        watch('isLoveTarget') &&
+            setErrors((prev) => ({ ...prev, isLoveTarget: undefined }));
+        watch('isInLove') &&
+            setErrors((prev) => ({ ...prev, isInLove: undefined }));
+        watch('isMarried') &&
+            setErrors((prev) => ({ ...prev, isMarried: undefined }));
+        watch('longestLoveTime') &&
+            setErrors((prev) => ({ ...prev, longestLoveTime: undefined }));
+        watch('residenceType') &&
+            setErrors((prev) => ({ ...prev, residenceType: undefined }));
+        watch('isOnlyChild') &&
+            setErrors((prev) => ({ ...prev, isOnlyChild: undefined }));
+        watch('allBrothers') &&
+            setErrors((prev) => ({ ...prev, allBrothers: undefined }));
+        watch('allSisters') &&
+            setErrors((prev) => ({ ...prev, allSisters: undefined }));
+        watch('myOrder') &&
+            setErrors((prev) => ({ ...prev, myOrder: undefined }));
+        watch('currentAddress') &&
+            setErrors((prev) => ({ ...prev, currentAddress: undefined }));
+        watch('leagueOfLegendsPosition') &&
+            setErrors((prev) => ({
+                ...prev,
+                leagueOfLegendsPosition: undefined,
+            }));
+        watch('leagueOfLegendsTier') &&
+            setErrors((prev) => ({ ...prev, leagueOfLegendsTier: undefined }));
+        watch('starcraftRace') &&
+            setErrors((prev) => ({ ...prev, starcraftRace: undefined }));
+        watch('favoriteMbti') &&
+            setErrors((prev) => ({ ...prev, favoriteMbti: undefined }));
+    });
 
     const { width } = useWindowSize();
     const isMobileSize = (width || 0) < 480;
@@ -227,6 +305,9 @@ const SurveyPresenter = function () {
                     </span>
                 </button>
             </div>
+            <FormError isShow={errors?.mbti === 'required'}>
+                MBTI를 입력해주세요.
+            </FormError>
             <Button
                 css={css`
                     margin-top: 100px;
@@ -237,8 +318,10 @@ const SurveyPresenter = function () {
                         mbti.ft === '·' ||
                         mbti.ns === '·' ||
                         mbti.pj === '·'
-                    )
+                    ) {
+                        setErrors((prev) => ({ ...prev, mbti: 'required' }));
                         return;
+                    }
                     setValue(
                         'mbti',
                         `${mbti.ei}${mbti.ns}${mbti.ft}${mbti.pj}`,
@@ -269,7 +352,7 @@ const SurveyPresenter = function () {
                         { value: 'MTF', text: 'MTF' },
                     ]}
                     itemWidth={isMobileSize ? '100px' : '120px'}
-                    register={register('gender', { required: true })}
+                    register={register('gender')}
                 />
                 <RadioButtons
                     items={[
@@ -277,8 +360,11 @@ const SurveyPresenter = function () {
                         { value: 'ETC', text: '기타' },
                     ]}
                     itemWidth="100px"
-                    register={register('gender', { required: true })}
+                    register={register('gender')}
                 />
+                <FormError isShow={errors?.gender === 'required'}>
+                    성별을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="태어난 해" />
@@ -290,6 +376,9 @@ const SurveyPresenter = function () {
                         required: true,
                     })}
                 />
+                <FormError isShow={errors?.birth === 'required'}>
+                    태어난 해를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="좋아하는 색상" />
@@ -297,17 +386,21 @@ const SurveyPresenter = function () {
                     css={css`
                         margin-top: 10px;
                     `}
+                    ref={favoriteColorRef}
                 >
                     <SliderPicker
                         color={favoriteColor}
                         onChangeComplete={handleFavoriteColorChange}
                     />
                 </div>
+                <FormError isShow={errors?.personalColor === 'required'}>
+                    좋아하는 색상을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="취미/특기" />
                 <SelectBox
-                    register={register('hobby', { required: true })}
+                    register={register('hobby')}
                     options={[
                         // todo 각 항목 text 맞는지 체크
                         { value: '', text: '클릭하여 선택' },
@@ -331,13 +424,16 @@ const SurveyPresenter = function () {
                         { value: 'ETC', text: '기타' },
                     ]}
                 />
+                <FormError isShow={errors?.hobby === 'required'}>
+                    취미 혹은 특기를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="사용하는 스마트폰" />
                 <RadioButtons
                     items={[{ value: 'IOS', text: 'iOS' }]}
                     itemWidth={isMobileSize ? '120px' : '150px'}
-                    register={register('smartphoneOS', { required: true })}
+                    register={register('smartphoneOS')}
                 />
                 <RadioButtons
                     items={[
@@ -345,8 +441,11 @@ const SurveyPresenter = function () {
                         { value: 'ETC', text: '기타' },
                     ]}
                     itemWidth={isMobileSize ? '130px' : '150px'}
-                    register={register('smartphoneOS', { required: true })}
+                    register={register('smartphoneOS')}
                 />
+                <FormError isShow={errors?.smartphoneOS === 'required'}>
+                    사용하는 스마트폰의 OS를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="정치성향" />
@@ -357,13 +456,16 @@ const SurveyPresenter = function () {
                         { value: 'MIDDLE', text: '중도' },
                     ]}
                     itemWidth={isMobileSize ? '80px' : '100px'}
-                    register={register('politics', { required: true })}
+                    register={register('politics')}
                 />
+                <FormError isShow={errors?.politics === 'required'}>
+                    정치성향을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="종교" />
                 <SelectBox
-                    register={register('religion', { required: true })}
+                    register={register('religion')}
                     options={[
                         { value: '', text: '클릭하여 선택' },
                         { value: 'NONE', text: '무교' },
@@ -376,6 +478,9 @@ const SurveyPresenter = function () {
                         { value: 'ETC', text: '기타' },
                     ]}
                 />
+                <FormError isShow={errors?.religion === 'required'}>
+                    종교를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <Button
                 css={css`
@@ -384,7 +489,59 @@ const SurveyPresenter = function () {
                         margin-top: 30px;
                     }
                 `}
-                onClick={handleClickNext}
+                onClick={() => {
+                    let isError = false;
+                    if (!watch('gender')) {
+                        setErrors((prev) => ({ ...prev, gender: 'required' }));
+                        setFocus('gender');
+                        isError = true;
+                    }
+                    if (!watch('birth')) {
+                        setErrors((prev) => ({ ...prev, birth: 'required' }));
+                        !isError && setFocus('birth');
+                        isError = true;
+                    }
+                    if (!favoriteColor) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            personalColor: 'required',
+                        }));
+                        // todo 포커싱으로 변경
+                        alert('좋아하는 색상을 선택해주세요.');
+                        isError = true;
+                    }
+                    if (!watch('hobby')) {
+                        setErrors((prev) => ({ ...prev, hobby: 'required' }));
+                        !isError && setFocus('hobby');
+                        isError = true;
+                    }
+                    if (!watch('smartphoneOS')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            smartphoneOS: 'required',
+                        }));
+                        !isError && setFocus('smartphoneOS');
+                        isError = true;
+                    }
+                    if (!watch('politics')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            politics: 'required',
+                        }));
+                        !isError && setFocus('politics');
+                        isError = true;
+                    }
+                    if (!watch('religion')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            religion: 'required',
+                        }));
+                        !isError && setFocus('religion');
+                        isError = true;
+                    }
+                    if (isError) return;
+                    handleClickNext();
+                }}
                 type="button"
             >
                 다음
@@ -395,13 +552,16 @@ const SurveyPresenter = function () {
                 <QuestionTitle text="현재 재직 여부" />
                 <YNRadioButton
                     width={isMobileSize ? '120px' : '150px'}
-                    register={register('isEmployed', { required: true })}
+                    register={register('isEmployed')}
                 />
+                <FormError isShow={errors?.isEmployed === 'required'}>
+                    재직여부를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="직종" />
                 <SelectBox
-                    register={register('job', { required: true })}
+                    register={register('job')}
                     options={[
                         { value: '', text: '클릭하여 선택' },
                         { value: '01', text: '관리직' },
@@ -430,39 +590,45 @@ const SurveyPresenter = function () {
                         { value: '24', text: '군인' },
                     ]}
                 />
+                <FormError isShow={errors?.job === 'required'}>
+                    직종을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="소득 수준 (단위:원)" />
                 <RadioButtons
                     items={[{ value: '2000', text: '2천만 ~ 3천만' }]}
                     itemWidth="200px"
-                    register={register('income', { required: true })}
+                    register={register('income')}
                 />
                 <RadioButtons
                     items={[{ value: '3000', text: '3천만 ~ 4천만' }]}
                     itemWidth="200px"
-                    register={register('income', { required: true })}
+                    register={register('income')}
                 />
                 <RadioButtons
                     items={[{ value: '4000', text: '4천만 ~ 6천만' }]}
                     itemWidth="200px"
-                    register={register('income', { required: true })}
+                    register={register('income')}
                 />
                 <RadioButtons
                     items={[{ value: '6000', text: '6천만 ~ 8천만' }]}
                     itemWidth="200px"
-                    register={register('income', { required: true })}
+                    register={register('income')}
                 />
                 <RadioButtons
                     items={[{ value: '8000', text: '8천만 ~ 1억' }]}
                     itemWidth="200px"
-                    register={register('income', { required: true })}
+                    register={register('income')}
                 />
                 <RadioButtons
                     items={[{ value: '10000', text: '1억 이상' }]}
                     itemWidth="200px"
-                    register={register('income', { required: true })}
+                    register={register('income')}
                 />
+                <FormError isShow={errors?.income === 'required'}>
+                    소득수준을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="첫 출근 연도" />
@@ -474,6 +640,9 @@ const SurveyPresenter = function () {
                         required: true,
                     })}
                 />
+                <FormError isShow={errors?.firstWorkYear === 'required'}>
+                    첫 출근 연도를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <Button
                 css={css`
@@ -482,7 +651,43 @@ const SurveyPresenter = function () {
                         margin-top: 30px;
                     }
                 `}
-                onClick={handleClickNext}
+                onClick={() => {
+                    let isError = false;
+                    if (!watch('isEmployed')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            isEmployed: 'required',
+                        }));
+                        !isError && setFocus('isEmployed');
+                        isError = true;
+                    }
+                    if (!watch('job')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            job: 'required',
+                        }));
+                        !isError && setFocus('job');
+                        isError = true;
+                    }
+                    if (!watch('income')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            income: 'required',
+                        }));
+                        !isError && setFocus('income');
+                        isError = true;
+                    }
+                    if (!watch('firstWorkYear')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            firstWorkYear: 'required',
+                        }));
+                        !isError && setFocus('firstWorkYear');
+                        isError = true;
+                    }
+                    if (isError) return;
+                    handleClickNext();
+                }}
                 type="button"
             >
                 다음
@@ -499,6 +704,9 @@ const SurveyPresenter = function () {
                         required: true,
                     })}
                 />
+                <FormError isShow={errors?.alcoholPerOnce === 'required'}>
+                    주량을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="음주 횟수 (1주)" />
@@ -510,11 +718,14 @@ const SurveyPresenter = function () {
                         required: true,
                     })}
                 />
+                <FormError isShow={errors?.alcoholPerWeek === 'required'}>
+                    음주 횟수를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="좋아하는 술" />
                 <SelectBox
-                    register={register('favoriteAlcohol', { required: true })}
+                    register={register('favoriteAlcohol')}
                     options={[
                         { value: '', text: '클릭하여 선택' },
                         { value: 'SOJU', text: '소주' },
@@ -525,6 +736,9 @@ const SurveyPresenter = function () {
                         { value: 'COCKTAIL', text: '칵테일' },
                     ]}
                 />
+                <FormError isShow={errors?.favoriteAlcohol === 'required'}>
+                    좋아하는 술을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <Button
                 css={css`
@@ -533,7 +747,35 @@ const SurveyPresenter = function () {
                         margin-top: 30px;
                     }
                 `}
-                onClick={handleClickNext}
+                onClick={() => {
+                    let isError = false;
+                    if (!watch('alcoholPerOnce')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            alcoholPerOnce: 'required',
+                        }));
+                        !isError && setFocus('alcoholPerOnce');
+                        isError = true;
+                    }
+                    if (!watch('alcoholPerWeek')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            alcoholPerWeek: 'required',
+                        }));
+                        !isError && setFocus('alcoholPerWeek');
+                        isError = true;
+                    }
+                    if (!watch('favoriteAlcohol')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            favoriteAlcohol: 'required',
+                        }));
+                        !isError && setFocus('favoriteAlcohol');
+                        isError = true;
+                    }
+                    if (isError) return;
+                    handleClickNext();
+                }}
                 type="button"
             >
                 다음
@@ -550,6 +792,9 @@ const SurveyPresenter = function () {
                         required: true,
                     })}
                 />
+                <FormError isShow={errors?.loveCount === 'required'}>
+                    연애 횟수를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="연애 대상" />
@@ -560,15 +805,21 @@ const SurveyPresenter = function () {
                         { value: 'BISEXUAL', text: '양성' },
                     ]}
                     itemWidth={isMobileSize ? '80px' : '100px'}
-                    register={register('isLoveTarget', { required: true })}
+                    register={register('isLoveTarget')}
                 />
+                <FormError isShow={errors?.isLoveTarget === 'required'}>
+                    연애 대상을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="현재 연애 여부 (기혼 포함)" />
                 <YNRadioButton
                     width={isMobileSize ? '120px' : '150px'}
-                    register={register('isInLove', { required: true })}
+                    register={register('isInLove')}
                 />
+                <FormError isShow={errors?.isInLove === 'required'}>
+                    현재 연애 여부를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="기혼 여부" />
@@ -576,6 +827,9 @@ const SurveyPresenter = function () {
                     width={isMobileSize ? '120px' : '150px'}
                     register={register('isMarried')}
                 />
+                <FormError isShow={errors?.isMarried === 'required'}>
+                    기혼여부를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="가장 긴 연애 기간" />
@@ -604,6 +858,9 @@ const SurveyPresenter = function () {
                     itemWidth="200px"
                     register={register('longestLoveTime')}
                 />
+                <FormError isShow={errors?.longestLoveTime === 'required'}>
+                    가장 긴 연애 기간을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <Button
                 css={css`
@@ -612,7 +869,51 @@ const SurveyPresenter = function () {
                         margin-top: 30px;
                     }
                 `}
-                onClick={handleClickNext}
+                onClick={() => {
+                    let isError = false;
+                    if (!watch('loveCount')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            loveCount: 'required',
+                        }));
+                        !isError && setFocus('loveCount');
+                        isError = true;
+                    }
+                    if (!watch('isLoveTarget')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            isLoveTarget: 'required',
+                        }));
+                        !isError && setFocus('isLoveTarget');
+                        isError = true;
+                    }
+                    if (!watch('isInLove')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            isInLove: 'required',
+                        }));
+                        !isError && setFocus('isInLove');
+                        isError = true;
+                    }
+                    if (!watch('isMarried')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            isMarried: 'required',
+                        }));
+                        !isError && setFocus('isMarried');
+                        isError = true;
+                    }
+                    if (!watch('longestLoveTime')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            longestLoveTime: 'required',
+                        }));
+                        !isError && setFocus('longestLoveTime');
+                        isError = true;
+                    }
+                    if (isError) return;
+                    handleClickNext();
+                }}
                 type="button"
             >
                 다음
@@ -624,7 +925,7 @@ const SurveyPresenter = function () {
                 <RadioButtons
                     items={[{ value: 'SINGLE', text: '싱글(1인 가구)' }]}
                     itemWidth="240px"
-                    register={register('residenceType', { required: true })}
+                    register={register('residenceType')}
                 />
                 <RadioButtons
                     items={[
@@ -632,15 +933,21 @@ const SurveyPresenter = function () {
                         { value: 'FAMILY', text: '가족' },
                     ]}
                     itemWidth="120px"
-                    register={register('residenceType', { required: true })}
+                    register={register('residenceType')}
                 />
+                <FormError isShow={errors?.residenceType === 'required'}>
+                    거주형태를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="외동 여부" />
                 <YNRadioButton
                     width="100px"
-                    register={register('isOnlyChild', { required: true })}
+                    register={register('isOnlyChild')}
                 />
+                <FormError isShow={errors?.isOnlyChild === 'required'}>
+                    외동 여부를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="모든 형제" />
@@ -651,6 +958,9 @@ const SurveyPresenter = function () {
                         valueAsNumber: true,
                     })}
                 />
+                <FormError isShow={errors?.allBrothers === 'required'}>
+                    모든 형제 수를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="모든 자매" />
@@ -661,6 +971,9 @@ const SurveyPresenter = function () {
                         valueAsNumber: true,
                     })}
                 />
+                <FormError isShow={errors?.allSisters === 'required'}>
+                    모든 자매 수를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="형제자매 중 몇째" />
@@ -669,11 +982,14 @@ const SurveyPresenter = function () {
                     placeholder="숫자 입력 (째)"
                     register={register('myOrder', { valueAsNumber: true })}
                 />
+                <FormError isShow={errors?.myOrder === 'required'}>
+                    형제자매 중 몇 째 인지 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="현재 거주 지역" />
                 <SelectBox
-                    register={register('currentAddress', { required: true })}
+                    register={register('currentAddress')}
                     options={[
                         // todo 서버쪽 enum 잘못됨
                         { value: '', text: '클릭하여 선택' },
@@ -696,6 +1012,9 @@ const SurveyPresenter = function () {
                         { value: '064', text: '제주특별자치도' },
                     ]}
                 />
+                <FormError isShow={errors?.currentAddress === 'required'}>
+                    현재 거주 지역을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <Button
                 css={css`
@@ -704,7 +1023,59 @@ const SurveyPresenter = function () {
                         margin-top: 30px;
                     }
                 `}
-                onClick={handleClickNext}
+                onClick={() => {
+                    let isError = false;
+                    if (!watch('residenceType')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            residenceType: 'required',
+                        }));
+                        !isError && setFocus('residenceType');
+                        isError = true;
+                    }
+                    if (!watch('isOnlyChild')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            isOnlyChild: 'required',
+                        }));
+                        !isError && setFocus('isOnlyChild');
+                        isError = true;
+                    }
+                    if (!watch('allBrothers')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            allBrothers: 'required',
+                        }));
+                        !isError && setFocus('allBrothers');
+                        isError = true;
+                    }
+                    if (!watch('allSisters')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            allSisters: 'required',
+                        }));
+                        !isError && setFocus('allSisters');
+                        isError = true;
+                    }
+                    if (!watch('myOrder')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            myOrder: 'required',
+                        }));
+                        !isError && setFocus('myOrder');
+                        isError = true;
+                    }
+                    if (!watch('currentAddress')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            currentAddress: 'required',
+                        }));
+                        !isError && setFocus('currentAddress');
+                        isError = true;
+                    }
+                    if (isError) return;
+                    handleClickNext();
+                }}
                 type="button"
             >
                 다음
@@ -730,6 +1101,11 @@ const SurveyPresenter = function () {
                     itemWidth="100px"
                     register={register('leagueOfLegendsPosition')}
                 />
+                <FormError
+                    isShow={errors?.leagueOfLegendsPosition === 'required'}
+                >
+                    롤 포지션을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="롤 티어" />
@@ -759,6 +1135,9 @@ const SurveyPresenter = function () {
                     itemWidth={isMobileSize ? '80px' : '100px'}
                     register={register('leagueOfLegendsTier')}
                 />
+                <FormError isShow={errors?.leagueOfLegendsTier === 'required'}>
+                    롤 티어를 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="스타크래프트 종족" />
@@ -771,6 +1150,9 @@ const SurveyPresenter = function () {
                     itemWidth="100px"
                     register={register('starcraftRace')}
                 />
+                <FormError isShow={errors?.starcraftRace === 'required'}>
+                    스타크래프트 종족을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="선호 MBTI" />
@@ -796,6 +1178,9 @@ const SurveyPresenter = function () {
                         { value: 'ENTJ', text: 'ENTJ' },
                     ]}
                 />
+                <FormError isShow={errors?.favoriteMbti === 'required'}>
+                    선호 MBTI 유형을 입력해주세요.
+                </FormError>
             </QuestionContainer>
             <Button
                 css={css`
@@ -804,7 +1189,43 @@ const SurveyPresenter = function () {
                         margin-top: 30px;
                     }
                 `}
-                type="submit"
+                onClick={handleSubmit((data) => {
+                    let isError = false;
+                    if (!watch('leagueOfLegendsPosition')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            leagueOfLegendsPosition: 'required',
+                        }));
+                        !isError && setFocus('leagueOfLegendsPosition');
+                        isError = true;
+                    }
+                    if (!watch('leagueOfLegendsTier')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            leagueOfLegendsTier: 'required',
+                        }));
+                        !isError && setFocus('leagueOfLegendsTier');
+                        isError = true;
+                    }
+                    if (!watch('starcraftRace')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            starcraftRace: 'required',
+                        }));
+                        !isError && setFocus('starcraftRace');
+                        isError = true;
+                    }
+                    if (!watch('favoriteMbti')) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            favoriteMbti: 'required',
+                        }));
+                        !isError && setFocus('favoriteMbti');
+                        isError = true;
+                    }
+                    if (isError) return;
+                    onSubmit(data);
+                })}
             >
                 제출
             </Button>
@@ -812,81 +1233,7 @@ const SurveyPresenter = function () {
     ];
 
     return (
-        <FormContainer
-            onSubmit={handleSubmit(async (data) => {
-                // user
-                const user: UsersDto = {
-                    token: authState.token,
-                    mbti: data.mbti,
-                    phone: authState.phone,
-                };
-                // common
-                const common: CommonDto = {
-                    gender: data.gender,
-                    birth: data.birth,
-                    personalColor: data.personalColor,
-                    hobby: data.hobby,
-                    smartphoneOS: data.smartphoneOS,
-                    politics: data.politics,
-                    religion: data.religion,
-                };
-                // etc
-                const etc: EtcDto = {
-                    leagueOfLegendsPosition: data.leagueOfLegendsPosition,
-                    leagueOfLegendsTier: data.leagueOfLegendsTier,
-                    starcraftRace: data.starcraftRace,
-                    favoriteMbti: data.favoriteMbti,
-                };
-                // love
-                const love: LoveDto = {
-                    loveCount: data.loveCount,
-                    isLoveTarget: data.isLoveTarget,
-                    isInLove: data.isInLove,
-                    isMarried: data.isMarried,
-                    longestLoveTime: data.longestLoveTime,
-                };
-                // residence
-                const residence: ResidenceDto = {
-                    residenceType: data.residenceType,
-                    isOnlyChild: data.isOnlyChild,
-                    allBrothers: data.allBrothers,
-                    allSisters: data.allSisters,
-                    myOrder: data.myOrder,
-                    currentAddress: data.currentAddress,
-                };
-                // alcohol
-                const alcohol: AlcoholDto = {
-                    alcoholPerOnce: data.alcoholPerOnce,
-                    alcoholPerWeek: data.alcoholPerWeek,
-                    favoriteAlcohol: data.favoriteAlcohol,
-                };
-                // work
-                const work: WorkDto = {
-                    isEmployed: data.isEmployed,
-                    job: data.job,
-                    income: data.income,
-                    firstWorkYear: data.firstWorkYear,
-                };
-
-                const surveyData: SurveyReqBodyDto = {
-                    user,
-                    common,
-                    love,
-                    residence,
-                    work,
-                    alcohol,
-                    etc,
-                };
-
-                try {
-                    await api({
-                        method: 'post',
-                        url: '/survey',
-                        data: surveyData,
-                    });
-                } catch {}
-            })}
-        >
+        <FormContainer>
             {surveySlide.map((elem, idx) => {
                 return (
                     <div
@@ -951,6 +1298,28 @@ const QuestionTitle = function ({ text }: { text: string }) {
         >
             {text}
         </h2>
+    );
+};
+
+const FormError = function ({
+    children,
+    isShow,
+}: {
+    children: string;
+    isShow: boolean;
+}) {
+    return isShow ? (
+        <span
+            css={css`
+                width: 100%;
+                color: yellow;
+                margin-top: 10px;
+            `}
+        >
+            {children}
+        </span>
+    ) : (
+        <></>
     );
 };
 
