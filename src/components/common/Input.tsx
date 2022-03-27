@@ -35,5 +35,11 @@ export default function Input({
 }: InputHTMLAttributes<HTMLInputElement> & {
     register?: UseFormRegisterReturn;
 }) {
-    return <StyledInput {...attrs} {...register} />;
+    return (
+        <StyledInput
+            {...attrs}
+            {...register}
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
+        />
+    );
 }

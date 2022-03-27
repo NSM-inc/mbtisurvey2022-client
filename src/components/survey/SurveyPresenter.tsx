@@ -53,15 +53,8 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
         ft: '·' | 'F' | 'T';
         pj: '·' | 'P' | 'J';
     }>({ ei: '·', ns: '·', ft: '·', pj: '·' });
-    const [errors, setErrors] = useState<{
-        [K in keyof (AlcoholDto &
-            CommonDto &
-            EtcDto &
-            LoveDto &
-            ResidenceDto &
-            UsersDto &
-            WorkDto)]?: 'required' | 'range';
-    }>();
+
+    const [isShowErrors, setIsShowErrors] = useState<boolean>(false);
 
     const favoriteColorRef = useRef<HTMLDivElement>(null);
 
@@ -75,66 +68,39 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
             WorkDto
     >();
 
-    useEffect(() => {
-        watch('gender') &&
-            setErrors((prev) => ({ ...prev, gender: undefined }));
-        watch('birth') && setErrors((prev) => ({ ...prev, birth: undefined }));
-        watch('personalColor') &&
-            setErrors((prev) => ({ ...prev, personalColor: undefined }));
-        watch('hobby') && setErrors((prev) => ({ ...prev, hobby: undefined }));
-        watch('smartphoneOS') &&
-            setErrors((prev) => ({ ...prev, smartphoneOS: undefined }));
-        watch('politics') &&
-            setErrors((prev) => ({ ...prev, politics: undefined }));
-        watch('religion') &&
-            setErrors((prev) => ({ ...prev, religion: undefined }));
-        watch('isEmployed') &&
-            setErrors((prev) => ({ ...prev, isEmployed: undefined }));
-        watch('job') && setErrors((prev) => ({ ...prev, job: undefined }));
-        watch('income') &&
-            setErrors((prev) => ({ ...prev, income: undefined }));
-        watch('firstWorkYear') &&
-            setErrors((prev) => ({ ...prev, firstWorkYear: undefined }));
-        watch('alcoholPerOnce') &&
-            setErrors((prev) => ({ ...prev, alcoholPerOnce: undefined }));
-        watch('alcoholPerWeek') &&
-            setErrors((prev) => ({ ...prev, alcoholPerWeek: undefined }));
-        watch('favoriteAlcohol') &&
-            setErrors((prev) => ({ ...prev, favoriteAlcohol: undefined }));
-        watch('loveCount') &&
-            setErrors((prev) => ({ ...prev, loveCount: undefined }));
-        watch('isLoveTarget') &&
-            setErrors((prev) => ({ ...prev, isLoveTarget: undefined }));
-        watch('isInLove') &&
-            setErrors((prev) => ({ ...prev, isInLove: undefined }));
-        watch('isMarried') &&
-            setErrors((prev) => ({ ...prev, isMarried: undefined }));
-        watch('longestLoveTime') &&
-            setErrors((prev) => ({ ...prev, longestLoveTime: undefined }));
-        watch('residenceType') &&
-            setErrors((prev) => ({ ...prev, residenceType: undefined }));
-        watch('isOnlyChild') &&
-            setErrors((prev) => ({ ...prev, isOnlyChild: undefined }));
-        watch('allBrothers') &&
-            setErrors((prev) => ({ ...prev, allBrothers: undefined }));
-        watch('allSisters') &&
-            setErrors((prev) => ({ ...prev, allSisters: undefined }));
-        watch('myOrder') &&
-            setErrors((prev) => ({ ...prev, myOrder: undefined }));
-        watch('currentAddress') &&
-            setErrors((prev) => ({ ...prev, currentAddress: undefined }));
-        watch('leagueOfLegendsPosition') &&
-            setErrors((prev) => ({
-                ...prev,
-                leagueOfLegendsPosition: undefined,
-            }));
-        watch('leagueOfLegendsTier') &&
-            setErrors((prev) => ({ ...prev, leagueOfLegendsTier: undefined }));
-        watch('starcraftRace') &&
-            setErrors((prev) => ({ ...prev, starcraftRace: undefined }));
-        watch('favoriteMbti') &&
-            setErrors((prev) => ({ ...prev, favoriteMbti: undefined }));
-    });
+    const watched = watch();
+
+    const {
+        gender,
+        birth,
+        personalColor,
+        hobby,
+        smartphoneOS,
+        politics,
+        religion,
+        isEmployed,
+        job,
+        income,
+        firstWorkYear,
+        alcoholPerOnce,
+        alcoholPerWeek,
+        favoriteAlcohol,
+        loveCount,
+        isLoveTarget,
+        isInLove,
+        isMarried,
+        longestLoveTime,
+        residenceType,
+        isOnlyChild,
+        allBrothers,
+        allSisters,
+        myOrder,
+        currentAddress,
+        leagueOfLegendsPosition,
+        leagueOfLegendsTier,
+        starcraftRace,
+        favoriteMbti,
+    } = watched;
 
     const { width } = useWindowSize();
     const isMobileSize = (width || 0) < 480;
@@ -305,9 +271,23 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     </span>
                 </button>
             </div>
-            <FormError isShow={errors?.mbti === 'required'}>
-                MBTI를 입력해주세요.
-            </FormError>
+            <div
+                css={css`
+                    margin-top: 10px;
+                `}
+            >
+                <FormError
+                    isShow={
+                        isShowErrors &&
+                        isShowErrors &&
+                        !!Object.entries(mbti).filter((elem) => elem[1] === '·')
+                            .length
+                    }
+                >
+                    MBTI를 입력해주세요.
+                </FormError>
+            </div>
+
             <Button
                 css={css`
                     margin-top: 100px;
@@ -319,13 +299,14 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         mbti.ns === '·' ||
                         mbti.pj === '·'
                     ) {
-                        setErrors((prev) => ({ ...prev, mbti: 'required' }));
+                        setIsShowErrors(true);
                         return;
                     }
                     setValue(
                         'mbti',
                         `${mbti.ei}${mbti.ns}${mbti.ft}${mbti.pj}`,
                     );
+                    setIsShowErrors(false);
                     handleClickNext();
                 }}
                 type="button"
@@ -362,7 +343,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth="100px"
                     register={register('gender')}
                 />
-                <FormError isShow={errors?.gender === 'required'}>
+                <FormError isShow={isShowErrors && isShowErrors && !gender}>
                     성별을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -376,7 +357,11 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         required: true,
                     })}
                 />
-                <FormError isShow={errors?.birth === 'required'}>
+                <FormError
+                    isShow={
+                        isShowErrors && (!birth || birth < 1900 || birth > 2022)
+                    }
+                >
                     태어난 해를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -393,7 +378,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         onChangeComplete={handleFavoriteColorChange}
                     />
                 </div>
-                <FormError isShow={errors?.personalColor === 'required'}>
+                <FormError isShow={isShowErrors && !personalColor}>
                     좋아하는 색상을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -424,7 +409,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         { value: 'ETC', text: '기타' },
                     ]}
                 />
-                <FormError isShow={errors?.hobby === 'required'}>
+                <FormError isShow={isShowErrors && !hobby}>
                     취미 혹은 특기를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -443,7 +428,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth={isMobileSize ? '130px' : '150px'}
                     register={register('smartphoneOS')}
                 />
-                <FormError isShow={errors?.smartphoneOS === 'required'}>
+                <FormError isShow={isShowErrors && !smartphoneOS}>
                     사용하는 스마트폰의 OS를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -458,7 +443,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth={isMobileSize ? '80px' : '100px'}
                     register={register('politics')}
                 />
-                <FormError isShow={errors?.politics === 'required'}>
+                <FormError isShow={isShowErrors && !politics}>
                     정치성향을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -478,7 +463,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         { value: 'ETC', text: '기타' },
                     ]}
                 />
-                <FormError isShow={errors?.religion === 'required'}>
+                <FormError isShow={isShowErrors && !religion}>
                     종교를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -491,55 +476,40 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                 `}
                 onClick={() => {
                     let isError = false;
-                    if (!watch('gender')) {
-                        setErrors((prev) => ({ ...prev, gender: 'required' }));
-                        setFocus('gender');
+                    if (!gender) {
+                        !isError && setFocus('gender');
                         isError = true;
                     }
-                    if (!watch('birth')) {
-                        setErrors((prev) => ({ ...prev, birth: 'required' }));
+                    if (!birth || birth < 1900 || birth > 2022) {
                         !isError && setFocus('birth');
                         isError = true;
                     }
                     if (!favoriteColor) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            personalColor: 'required',
-                        }));
                         // todo 포커싱으로 변경
                         alert('좋아하는 색상을 선택해주세요.');
                         isError = true;
                     }
-                    if (!watch('hobby')) {
-                        setErrors((prev) => ({ ...prev, hobby: 'required' }));
+                    if (!hobby) {
                         !isError && setFocus('hobby');
                         isError = true;
                     }
-                    if (!watch('smartphoneOS')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            smartphoneOS: 'required',
-                        }));
+                    if (!smartphoneOS) {
                         !isError && setFocus('smartphoneOS');
                         isError = true;
                     }
-                    if (!watch('politics')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            politics: 'required',
-                        }));
+                    if (!politics) {
                         !isError && setFocus('politics');
                         isError = true;
                     }
-                    if (!watch('religion')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            religion: 'required',
-                        }));
+                    if (!religion) {
                         !isError && setFocus('religion');
                         isError = true;
                     }
-                    if (isError) return;
+                    if (isError) {
+                        setIsShowErrors(true);
+                        return;
+                    }
+                    setIsShowErrors(false);
                     handleClickNext();
                 }}
                 type="button"
@@ -554,7 +524,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     width={isMobileSize ? '120px' : '150px'}
                     register={register('isEmployed')}
                 />
-                <FormError isShow={errors?.isEmployed === 'required'}>
+                <FormError isShow={isShowErrors && !isEmployed}>
                     재직여부를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -590,7 +560,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         { value: '24', text: '군인' },
                     ]}
                 />
-                <FormError isShow={errors?.job === 'required'}>
+                <FormError isShow={isShowErrors && !job}>
                     직종을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -626,7 +596,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth="200px"
                     register={register('income')}
                 />
-                <FormError isShow={errors?.income === 'required'}>
+                <FormError isShow={isShowErrors && !income}>
                     소득수준을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -640,7 +610,14 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         required: true,
                     })}
                 />
-                <FormError isShow={errors?.firstWorkYear === 'required'}>
+                <FormError
+                    isShow={
+                        isShowErrors &&
+                        (!firstWorkYear ||
+                            firstWorkYear < 1900 ||
+                            firstWorkYear > 2022)
+                    }
+                >
                     첫 출근 연도를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -653,39 +630,31 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                 `}
                 onClick={() => {
                     let isError = false;
-                    if (!watch('isEmployed')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            isEmployed: 'required',
-                        }));
+                    if (!isEmployed) {
                         !isError && setFocus('isEmployed');
                         isError = true;
                     }
-                    if (!watch('job')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            job: 'required',
-                        }));
+                    if (!job) {
                         !isError && setFocus('job');
                         isError = true;
                     }
-                    if (!watch('income')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            income: 'required',
-                        }));
+                    if (!income) {
                         !isError && setFocus('income');
                         isError = true;
                     }
-                    if (!watch('firstWorkYear')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            firstWorkYear: 'required',
-                        }));
+                    if (
+                        !firstWorkYear ||
+                        firstWorkYear < 1900 ||
+                        firstWorkYear > 2022
+                    ) {
                         !isError && setFocus('firstWorkYear');
                         isError = true;
                     }
-                    if (isError) return;
+                    if (isError) {
+                        setIsShowErrors(true);
+                        return;
+                    }
+                    setIsShowErrors(false);
                     handleClickNext();
                 }}
                 type="button"
@@ -704,7 +673,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         required: true,
                     })}
                 />
-                <FormError isShow={errors?.alcoholPerOnce === 'required'}>
+                <FormError isShow={isShowErrors && !alcoholPerOnce}>
                     주량을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -718,7 +687,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         required: true,
                     })}
                 />
-                <FormError isShow={errors?.alcoholPerWeek === 'required'}>
+                <FormError isShow={isShowErrors && !alcoholPerWeek}>
                     음주 횟수를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -736,7 +705,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         { value: 'COCKTAIL', text: '칵테일' },
                     ]}
                 />
-                <FormError isShow={errors?.favoriteAlcohol === 'required'}>
+                <FormError isShow={isShowErrors && !favoriteAlcohol}>
                     좋아하는 술을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -749,31 +718,28 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                 `}
                 onClick={() => {
                     let isError = false;
-                    if (!watch('alcoholPerOnce')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            alcoholPerOnce: 'required',
-                        }));
+                    if (!alcoholPerOnce) {
                         !isError && setFocus('alcoholPerOnce');
                         isError = true;
                     }
-                    if (!watch('alcoholPerWeek')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            alcoholPerWeek: 'required',
-                        }));
+                    if (!alcoholPerWeek) {
                         !isError && setFocus('alcoholPerWeek');
                         isError = true;
                     }
-                    if (!watch('favoriteAlcohol')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            favoriteAlcohol: 'required',
-                        }));
+                    if (!favoriteAlcohol) {
                         !isError && setFocus('favoriteAlcohol');
                         isError = true;
                     }
-                    if (isError) return;
+                    if (isError) {
+                        setIsShowErrors(true);
+                        console.log(
+                            alcoholPerOnce,
+                            alcoholPerWeek,
+                            favoriteAlcohol,
+                        );
+                        return;
+                    }
+                    setIsShowErrors(false);
                     handleClickNext();
                 }}
                 type="button"
@@ -792,7 +758,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         required: true,
                     })}
                 />
-                <FormError isShow={errors?.loveCount === 'required'}>
+                <FormError isShow={isShowErrors && !loveCount}>
                     연애 횟수를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -807,7 +773,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth={isMobileSize ? '80px' : '100px'}
                     register={register('isLoveTarget')}
                 />
-                <FormError isShow={errors?.isLoveTarget === 'required'}>
+                <FormError isShow={isShowErrors && !isLoveTarget}>
                     연애 대상을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -817,7 +783,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     width={isMobileSize ? '120px' : '150px'}
                     register={register('isInLove')}
                 />
-                <FormError isShow={errors?.isInLove === 'required'}>
+                <FormError isShow={isShowErrors && !isInLove}>
                     현재 연애 여부를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -827,7 +793,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     width={isMobileSize ? '120px' : '150px'}
                     register={register('isMarried')}
                 />
-                <FormError isShow={errors?.isMarried === 'required'}>
+                <FormError isShow={isShowErrors && !isMarried}>
                     기혼여부를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -858,7 +824,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth="200px"
                     register={register('longestLoveTime')}
                 />
-                <FormError isShow={errors?.longestLoveTime === 'required'}>
+                <FormError isShow={isShowErrors && !longestLoveTime}>
                     가장 긴 연애 기간을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -871,47 +837,31 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                 `}
                 onClick={() => {
                     let isError = false;
-                    if (!watch('loveCount')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            loveCount: 'required',
-                        }));
+                    if (!loveCount) {
                         !isError && setFocus('loveCount');
                         isError = true;
                     }
-                    if (!watch('isLoveTarget')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            isLoveTarget: 'required',
-                        }));
+                    if (!isLoveTarget) {
                         !isError && setFocus('isLoveTarget');
                         isError = true;
                     }
-                    if (!watch('isInLove')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            isInLove: 'required',
-                        }));
+                    if (!isInLove) {
                         !isError && setFocus('isInLove');
                         isError = true;
                     }
-                    if (!watch('isMarried')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            isMarried: 'required',
-                        }));
+                    if (!isMarried) {
                         !isError && setFocus('isMarried');
                         isError = true;
                     }
-                    if (!watch('longestLoveTime')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            longestLoveTime: 'required',
-                        }));
+                    if (!longestLoveTime) {
                         !isError && setFocus('longestLoveTime');
                         isError = true;
                     }
-                    if (isError) return;
+                    if (isError) {
+                        setIsShowErrors(true);
+                        return;
+                    }
+                    setIsShowErrors(false);
                     handleClickNext();
                 }}
                 type="button"
@@ -935,7 +885,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth="120px"
                     register={register('residenceType')}
                 />
-                <FormError isShow={errors?.residenceType === 'required'}>
+                <FormError isShow={isShowErrors && !residenceType}>
                     거주형태를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -945,7 +895,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     width="100px"
                     register={register('isOnlyChild')}
                 />
-                <FormError isShow={errors?.isOnlyChild === 'required'}>
+                <FormError isShow={isShowErrors && !isOnlyChild}>
                     외동 여부를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -958,7 +908,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         valueAsNumber: true,
                     })}
                 />
-                <FormError isShow={errors?.allBrothers === 'required'}>
+                <FormError isShow={isShowErrors && !allBrothers}>
                     모든 형제 수를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -971,7 +921,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         valueAsNumber: true,
                     })}
                 />
-                <FormError isShow={errors?.allSisters === 'required'}>
+                <FormError isShow={isShowErrors && !allSisters}>
                     모든 자매 수를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -982,7 +932,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     placeholder="숫자 입력 (째)"
                     register={register('myOrder', { valueAsNumber: true })}
                 />
-                <FormError isShow={errors?.myOrder === 'required'}>
+                <FormError isShow={isShowErrors && !myOrder}>
                     형제자매 중 몇 째 인지 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -1012,7 +962,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         { value: '064', text: '제주특별자치도' },
                     ]}
                 />
-                <FormError isShow={errors?.currentAddress === 'required'}>
+                <FormError isShow={isShowErrors && !currentAddress}>
                     현재 거주 지역을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -1025,55 +975,35 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                 `}
                 onClick={() => {
                     let isError = false;
-                    if (!watch('residenceType')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            residenceType: 'required',
-                        }));
+                    if (!residenceType) {
                         !isError && setFocus('residenceType');
                         isError = true;
                     }
-                    if (!watch('isOnlyChild')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            isOnlyChild: 'required',
-                        }));
+                    if (!isOnlyChild) {
                         !isError && setFocus('isOnlyChild');
                         isError = true;
                     }
-                    if (!watch('allBrothers')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            allBrothers: 'required',
-                        }));
+                    if (!allBrothers) {
                         !isError && setFocus('allBrothers');
                         isError = true;
                     }
-                    if (!watch('allSisters')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            allSisters: 'required',
-                        }));
+                    if (!allSisters) {
                         !isError && setFocus('allSisters');
                         isError = true;
                     }
-                    if (!watch('myOrder')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            myOrder: 'required',
-                        }));
+                    if (!myOrder) {
                         !isError && setFocus('myOrder');
                         isError = true;
                     }
-                    if (!watch('currentAddress')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            currentAddress: 'required',
-                        }));
+                    if (!currentAddress) {
                         !isError && setFocus('currentAddress');
                         isError = true;
                     }
-                    if (isError) return;
+                    if (isError) {
+                        setIsShowErrors(true);
+                        return;
+                    }
+                    setIsShowErrors(false);
                     handleClickNext();
                 }}
                 type="button"
@@ -1101,9 +1031,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth="100px"
                     register={register('leagueOfLegendsPosition')}
                 />
-                <FormError
-                    isShow={errors?.leagueOfLegendsPosition === 'required'}
-                >
+                <FormError isShow={isShowErrors && !leagueOfLegendsPosition}>
                     롤 포지션을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -1135,7 +1063,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth={isMobileSize ? '80px' : '100px'}
                     register={register('leagueOfLegendsTier')}
                 />
-                <FormError isShow={errors?.leagueOfLegendsTier === 'required'}>
+                <FormError isShow={isShowErrors && !leagueOfLegendsTier}>
                     롤 티어를 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -1150,7 +1078,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth="100px"
                     register={register('starcraftRace')}
                 />
-                <FormError isShow={errors?.starcraftRace === 'required'}>
+                <FormError isShow={isShowErrors && !starcraftRace}>
                     스타크래프트 종족을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -1178,7 +1106,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         { value: 'ENTJ', text: 'ENTJ' },
                     ]}
                 />
-                <FormError isShow={errors?.favoriteMbti === 'required'}>
+                <FormError isShow={isShowErrors && !favoriteMbti}>
                     선호 MBTI 유형을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -1191,39 +1119,27 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                 `}
                 onClick={handleSubmit((data) => {
                     let isError = false;
-                    if (!watch('leagueOfLegendsPosition')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            leagueOfLegendsPosition: 'required',
-                        }));
+                    if (!leagueOfLegendsPosition) {
                         !isError && setFocus('leagueOfLegendsPosition');
                         isError = true;
                     }
-                    if (!watch('leagueOfLegendsTier')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            leagueOfLegendsTier: 'required',
-                        }));
+                    if (!leagueOfLegendsTier) {
                         !isError && setFocus('leagueOfLegendsTier');
                         isError = true;
                     }
-                    if (!watch('starcraftRace')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            starcraftRace: 'required',
-                        }));
+                    if (!starcraftRace) {
                         !isError && setFocus('starcraftRace');
                         isError = true;
                     }
-                    if (!watch('favoriteMbti')) {
-                        setErrors((prev) => ({
-                            ...prev,
-                            favoriteMbti: 'required',
-                        }));
+                    if (!favoriteMbti) {
                         !isError && setFocus('favoriteMbti');
                         isError = true;
                     }
-                    if (isError) return;
+                    if (isError) {
+                        setIsShowErrors(true);
+                        return;
+                    }
+                    setIsShowErrors(false);
                     onSubmit(data);
                 })}
             >
