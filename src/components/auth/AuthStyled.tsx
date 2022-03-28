@@ -3,15 +3,10 @@ import styled from '@emotion/styled';
 import { isDesktop, isMobile } from '../../assets/consts/mediaQuery';
 
 export const Container = styled.div`
-    ${isMobile} {
-        padding: 0 32px;
-        margin-top: 40px;
-    }
-
-    ${isDesktop} {
-        display: flex;
-        align-items: center;
-    }
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-left: 32px;
 `;
 
 const fadeIn = keyframes`
@@ -51,35 +46,23 @@ export const InputBox = styled.div`
 `;
 
 export const InputContainer = styled.div`
-    flex: 2;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
 `;
 
 export const Time = styled.div`
-    position: relative;
+    ${isDesktop} {
+        position: absolute;
+        top: 0;
+        right: -30px;
+    }
+
     display: flex;
-    align-items: flex-start;
-    flex: 1;
-    height: 326px;
+    justify-content: flex-end;
 
     > div {
-        position: absolute;
-        height: 100%;
-        right: -10px;
-        ${isDesktop} {
-            width: 100%;
-            max-width: 500px;
-        }
-        ${isMobile} {
-            width: 100%;
-            max-width: 440px;
-        }
-        ${isMobile} {
-            width: 254px;
-        }
-
         white-space: nowrap;
         overflow: hidden;
     }

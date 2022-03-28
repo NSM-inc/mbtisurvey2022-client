@@ -9,8 +9,6 @@ import { useRecoilValue } from 'recoil';
 import { isMobile } from '../../assets/consts/mediaQuery';
 
 const Container = styled.div`
-    position: fixed;
-    top: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -19,15 +17,7 @@ const Container = styled.div`
     width: 100%;
     height: 96px;
     background: transparent;
-    z-index: 1;
     pointer-events: none;
-
-    ${isMobile} {
-        height: 77px;
-    }
-    ${isMobile} {
-        height: 58px;
-    }
 `;
 
 const Header = () => {

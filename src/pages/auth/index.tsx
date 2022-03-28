@@ -4,7 +4,7 @@ import { Layout, Template } from '../../components/layout';
 const AuthPage = () => {
     return (
         <Layout>
-            <Template minHeight="100vh">
+            <Template>
                 <AuthContainer />
             </Template>
         </Layout>

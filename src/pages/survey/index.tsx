@@ -9,7 +9,7 @@ const SurveyPage: NextPage = () => {
 
     return (
         <Layout showHeader={true} showFooter={true}>
-            <Template minHeight="100vh">
+            <Template>
                 <SurveyContainer />
             </Template>
         </Layout>

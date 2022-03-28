@@ -12,6 +12,7 @@ const AuthPresenter = ({
 }) => {
     const {
         register,
+        watch,
         setValue,
         getValues,
         setFocus,
@@ -35,7 +36,7 @@ const AuthPresenter = ({
     };
 
     useEffect(() => {
-        setFocus(step ? (step === 1 ? 'phone' : 'authNumber') : 'name');
+        setFocus(step ? 'authNumber' : 'phone');
     }, [step]);
 
     return (
@@ -54,49 +55,32 @@ const AuthPresenter = ({
                         <InputBox>
                             <div>
                                 <Input
-                                    placeholder="이름 입력"
-                                    register={register('name', {
+                                    placeholder="전화번호 입력"
+                                    register={register('phone', {
                                         required: true,
+                                        validate: (v) => {
+                                            if (!isFinite(v)) {
+                                                setValue(
+                                                    'phone',
+                                                    v.slice(0, -1),
+                                                );
+                                                return false;
+                                            }
+                                            return true;
+                                        },
                                     })}
                                     onKeyPress={(e) => {
-                                        if (e.key === 'Enter' && step === 0)
+                                        if (
+                                            e.key === 'Enter' &&
+                                            watch('phone')
+                                        ) {
                                             setStep(1);
+                                            requestAuthCode();
+                                        }
                                     }}
                                 />
-                                {errors['name']?.type === 'required' && (
-                                    <div>이름을 입력해주세요.</div>
-                                )}
                             </div>
                             {step > 0 && (
-                                <div>
-                                    <Input
-                                        placeholder="전화번호 입력"
-                                        register={register('phone', {
-                                            required: true,
-                                            validate: (v) => {
-                                                if (!isFinite(v)) {
-                                                    setValue(
-                                                        'phone',
-                                                        v.slice(0, -1),
-                                                    );
-                                                    return false;
-                                                }
-                                                return true;
-                                            },
-                                        })}
-                                        onKeyPress={(e) => {
-                                            if (e.key === 'Enter') {
-                                                setStep(2);
-                                                requestAuthCode();
-                                            }
-                                        }}
-                                    />
-                                    {errors['phone']?.type === 'required' && (
-                                        <div>전화번호를 입력해주세요.</div>
-                                    )}
-                                </div>
-                            )}
-                            {step > 1 && (
                                 <>
                                     <div>
                                         <Input

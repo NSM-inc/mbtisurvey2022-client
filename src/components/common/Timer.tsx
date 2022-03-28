@@ -20,9 +20,6 @@ const Clock = styled('div')`
         font-size: 200px;
     }
     ${isMobile} {
-        font-size: 140px;
-    }
-    ${isMobile} {
         font-size: 100px;
     }
 `;
