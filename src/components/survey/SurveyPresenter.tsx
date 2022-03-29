@@ -711,7 +711,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                 />
                 <Input
                     type="number"
-                    placeholder="숫자 입력 (회)"
+                    placeholder="숫자 입력 (병)"
                     register={register('alcoholPerOnce', {
                         valueAsNumber: true,
                         required: true,
