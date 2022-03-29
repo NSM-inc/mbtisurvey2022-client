@@ -93,7 +93,10 @@ const SurveyContainer = function () {
             residence,
             work,
             alcohol,
-            etc,
+            etc: {
+                ...etc,
+                favoriteMbti: etc.favoriteMbti === '' ? null : etc.favoriteMbti,
+            },
         };
 
         try {

@@ -14,6 +14,8 @@ export default interface EtcDto {
     starcraftRace: 'TERRAN' | 'PROTOSS' | 'ZERG';
     // 스타크래프트 종족
     favoriteMbti:
+        | null
+        | ''
         | 'INTJ'
         | 'ENTJ'
         | 'ISFP'
