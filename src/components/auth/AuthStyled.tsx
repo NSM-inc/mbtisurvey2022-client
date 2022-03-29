@@ -1,69 +1,73 @@
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isDesktop, isMobile } from '../../assets/consts/mediaQuery';
-
-export const Container = styled.div`
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding-left: 32px;
-`;
+import { isMobile } from '../../assets/consts/mediaQuery';
 
 const fadeIn = keyframes`
    0% { opacity: 0; }
    100% { opacity: 1; }
 `;
 
-export const Title = styled.div`
+export const Container = styled.div`
     width: 100%;
-    max-width: 440px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+
+    @media only screen and (max-width: 1000px) {
+        align-items: center;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+`;
+
+export const Title = styled.div`
     margin-bottom: 32px;
     font-size: 40px;
     font-weight: 400;
-
-    > div {
-        line-height: 48px;
-    }
+    line-height: 1.5;
 
     ${isMobile} {
-        margin-top: 10px;
-        margin-bottom: 20px;
         font-size: 28px;
     }
 `;
 
 export const InputBox = styled.div`
-    width: 100%;
     max-width: 440px;
 
     > div {
         margin-bottom: 32px;
-        ${isMobile} {
-            margin-bottom: 10px;
-        }
         animation: ${fadeIn} 1s linear;
     }
 `;
 
-export const InputContainer = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`;
-
-export const Time = styled.div`
-    ${isDesktop} {
+export const TimerContainer = styled.div`
+    @media only screen and (min-width: 1000px) {
         position: absolute;
         top: 0;
-        right: -30px;
+        right: -40px;
     }
 
-    display: flex;
-    justify-content: flex-end;
+    @media only screen and (max-width: 1000px) {
+        position: relative;
+        width: 100%;
+        height: 190px;
 
-    > div {
-        white-space: nowrap;
-        overflow: hidden;
+        > div {
+            position: absolute;
+            top: 0;
+            right: -40px;
+        }
+
+        > button {
+            position: absolute;
+            bottom: 0;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
     }
 `;
