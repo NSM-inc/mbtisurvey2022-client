@@ -6,7 +6,7 @@ import { isMobile } from '../../assets/consts/mediaQuery';
 
 const StyledInput = styled.input`
     width: 100%;
-    max-width: 356px;
+    max-width: ${isMobile ? 'none' : '356px'};
     height: 65px;
     background: transparent;
     border: 0;

@@ -124,6 +124,16 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
         });
     };
 
+    const favoriteAlcoholOptions = [
+        { value: '', text: '클릭하여 선택' },
+        { value: 'SOJU', text: '소주' },
+        { value: 'BEER', text: '맥주' },
+        { value: 'WINE', text: '와인' },
+        { value: 'MAKGEOLI', text: '막걸리' },
+        { value: 'BOARDCAKE', text: '보드카' },
+        { value: 'COCKTAIL', text: '칵테일' },
+    ];
+
     const surveySlide = [
         <>
             <h1
@@ -528,7 +538,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     재직여부를 입력해주세요.
                 </FormError>
             </QuestionContainer>
-            <QuestionContainer>
+            <QuestionContainer isDisabled={!isEmployed || isEmployed === '0'}>
                 <QuestionTitle text="직종" />
                 <SelectBox
                     register={register('job')}
@@ -559,44 +569,59 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         { value: '23', text: '농림어업' },
                         { value: '24', text: '군인' },
                     ]}
+                    disabled={!isEmployed || isEmployed === '0'}
                 />
-                <FormError isShow={isShowErrors && !job}>
+                <FormError isShow={isShowErrors && !job && isEmployed === '1'}>
                     직종을 입력해주세요.
                 </FormError>
             </QuestionContainer>
-            <QuestionContainer>
+            <QuestionContainer isDisabled={!isEmployed || isEmployed === '0'}>
                 <QuestionTitle text="소득 수준 (단위:원)" />
                 <RadioButtons
                     items={[{ value: '2000', text: '2천만 ~ 3천만' }]}
                     itemWidth="200px"
-                    register={register('income')}
+                    register={register('income', {
+                        disabled: !isEmployed || isEmployed === '0',
+                    })}
                 />
                 <RadioButtons
                     items={[{ value: '3000', text: '3천만 ~ 4천만' }]}
                     itemWidth="200px"
-                    register={register('income')}
+                    register={register('income', {
+                        disabled: !isEmployed || isEmployed === '0',
+                    })}
                 />
                 <RadioButtons
                     items={[{ value: '4000', text: '4천만 ~ 6천만' }]}
                     itemWidth="200px"
-                    register={register('income')}
+                    register={register('income', {
+                        disabled: !isEmployed || isEmployed === '0',
+                    })}
                 />
                 <RadioButtons
                     items={[{ value: '6000', text: '6천만 ~ 8천만' }]}
                     itemWidth="200px"
-                    register={register('income')}
+                    register={register('income', {
+                        disabled: !isEmployed || isEmployed === '0',
+                    })}
                 />
                 <RadioButtons
                     items={[{ value: '8000', text: '8천만 ~ 1억' }]}
                     itemWidth="200px"
-                    register={register('income')}
+                    register={register('income', {
+                        disabled: !isEmployed || isEmployed === '0',
+                    })}
                 />
                 <RadioButtons
                     items={[{ value: '10000', text: '1억 이상' }]}
                     itemWidth="200px"
-                    register={register('income')}
+                    register={register('income', {
+                        disabled: !isEmployed || isEmployed === '0',
+                    })}
                 />
-                <FormError isShow={isShowErrors && !income}>
+                <FormError
+                    isShow={isShowErrors && !income && isEmployed === '1'}
+                >
                     소득수준을 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -634,11 +659,11 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         !isError && setFocus('isEmployed');
                         isError = true;
                     }
-                    if (!job) {
+                    if (!job && isEmployed === '1') {
                         !isError && setFocus('job');
                         isError = true;
                     }
-                    if (!income) {
+                    if (!income && isEmployed === '1') {
                         !isError && setFocus('income');
                         isError = true;
                     }
@@ -664,7 +689,26 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
         </>,
         <>
             <QuestionContainer>
-                <QuestionTitle text="주량" />
+                <QuestionTitle text="좋아하는 술" />
+                <SelectBox
+                    register={register('favoriteAlcohol')}
+                    options={favoriteAlcoholOptions}
+                />
+                <FormError isShow={isShowErrors && !favoriteAlcohol}>
+                    좋아하는 술을 입력해주세요.
+                </FormError>
+            </QuestionContainer>
+            <QuestionContainer>
+                <QuestionTitle
+                    text={`주량 ${
+                        favoriteAlcohol &&
+                        '(' +
+                            favoriteAlcoholOptions.filter(
+                                (elem) => elem.value === favoriteAlcohol,
+                            )[0].text +
+                            ')'
+                    }`}
+                />
                 <Input
                     type="number"
                     placeholder="숫자 입력 (회)"
@@ -691,24 +735,6 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     음주 횟수를 입력해주세요.
                 </FormError>
             </QuestionContainer>
-            <QuestionContainer>
-                <QuestionTitle text="좋아하는 술" />
-                <SelectBox
-                    register={register('favoriteAlcohol')}
-                    options={[
-                        { value: '', text: '클릭하여 선택' },
-                        { value: 'SOJU', text: '소주' },
-                        { value: 'BEER', text: '맥주' },
-                        { value: 'WINE', text: '와인' },
-                        { value: 'MAKGEOLI', text: '막걸리' },
-                        { value: 'BOARDCAKE', text: '보드카' },
-                        { value: 'COCKTAIL', text: '칵테일' },
-                    ]}
-                />
-                <FormError isShow={isShowErrors && !favoriteAlcohol}>
-                    좋아하는 술을 입력해주세요.
-                </FormError>
-            </QuestionContainer>
             <Button
                 css={css`
                     margin-top: 100px;
@@ -732,11 +758,6 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     }
                     if (isError) {
                         setIsShowErrors(true);
-                        console.log(
-                            alcoholPerOnce,
-                            alcoholPerWeek,
-                            favoriteAlcohol,
-                        );
                         return;
                     }
                     setIsShowErrors(false);
@@ -758,11 +779,28 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         required: true,
                     })}
                 />
-                <FormError isShow={isShowErrors && !loveCount}>
+                <FormError
+                    isShow={
+                        (isShowErrors && !loveCount && loveCount !== 0) ||
+                        loveCount < 0
+                    }
+                >
                     연애 횟수를 입력해주세요.
                 </FormError>
             </QuestionContainer>
-            <QuestionContainer>
+            <QuestionContainer isDisabled={!loveCount || loveCount < 0}>
+                <QuestionTitle text="현재 연애 여부 (기혼 포함)" />
+                <YNRadioButton
+                    width={isMobileSize ? '120px' : '150px'}
+                    register={register('isInLove', {
+                        disabled: !loveCount || loveCount < 0,
+                    })}
+                />
+                <FormError isShow={isShowErrors && !isInLove && loveCount > 0}>
+                    현재 연애 여부를 입력해주세요.
+                </FormError>
+            </QuestionContainer>
+            <QuestionContainer isDisabled={!loveCount || loveCount < 0}>
                 <QuestionTitle text="연애 대상" />
                 <RadioButtons
                     items={[
@@ -771,20 +809,57 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         { value: 'BISEXUAL', text: '양성' },
                     ]}
                     itemWidth={isMobileSize ? '80px' : '100px'}
-                    register={register('isLoveTarget')}
+                    register={register('isLoveTarget', {
+                        disabled: !loveCount || loveCount < 0,
+                    })}
                 />
-                <FormError isShow={isShowErrors && !isLoveTarget}>
+                <FormError
+                    isShow={isShowErrors && !isLoveTarget && loveCount > 0}
+                >
                     연애 대상을 입력해주세요.
                 </FormError>
             </QuestionContainer>
-            <QuestionContainer>
-                <QuestionTitle text="현재 연애 여부 (기혼 포함)" />
-                <YNRadioButton
-                    width={isMobileSize ? '120px' : '150px'}
-                    register={register('isInLove')}
+            <QuestionContainer isDisabled={!loveCount || loveCount < 0}>
+                <QuestionTitle text="가장 긴 연애 기간" />
+                <RadioButtons
+                    items={[{ value: '0TO3MONTHS', text: '0 ~ 3 개월' }]}
+                    itemWidth="200px"
+                    register={register('longestLoveTime', {
+                        disabled: !loveCount || loveCount < 0,
+                    })}
                 />
-                <FormError isShow={isShowErrors && !isInLove}>
-                    현재 연애 여부를 입력해주세요.
+                <RadioButtons
+                    items={[{ value: '3TO6MONTHS', text: '3 ~ 6 개월' }]}
+                    itemWidth="200px"
+                    register={register('longestLoveTime', {
+                        disabled: !loveCount || loveCount < 0,
+                    })}
+                />
+                <RadioButtons
+                    items={[{ value: '6TO12MONTHS', text: '6 ~ 12 개월' }]}
+                    itemWidth="200px"
+                    register={register('longestLoveTime', {
+                        disabled: !loveCount || loveCount < 0,
+                    })}
+                />
+                <RadioButtons
+                    items={[{ value: '1TO3YEARS', text: '1 ~ 3 년' }]}
+                    itemWidth="200px"
+                    register={register('longestLoveTime', {
+                        disabled: !loveCount || loveCount < 0,
+                    })}
+                />
+                <RadioButtons
+                    items={[{ value: 'OVER3YEARS', text: '3년 이상' }]}
+                    itemWidth="200px"
+                    register={register('longestLoveTime', {
+                        disabled: !loveCount || loveCount < 0,
+                    })}
+                />
+                <FormError
+                    isShow={isShowErrors && !longestLoveTime && loveCount > 0}
+                >
+                    가장 긴 연애 기간을 입력해주세요.
                 </FormError>
             </QuestionContainer>
             <QuestionContainer>
@@ -797,37 +872,6 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     기혼여부를 입력해주세요.
                 </FormError>
             </QuestionContainer>
-            <QuestionContainer>
-                <QuestionTitle text="가장 긴 연애 기간" />
-                <RadioButtons
-                    items={[{ value: '0TO3MONTHS', text: '0 ~ 3 개월' }]}
-                    itemWidth="200px"
-                    register={register('longestLoveTime')}
-                />
-                <RadioButtons
-                    items={[{ value: '3TO6MONTHS', text: '3 ~ 6 개월' }]}
-                    itemWidth="200px"
-                    register={register('longestLoveTime')}
-                />
-                <RadioButtons
-                    items={[{ value: '6TO12MONTHS', text: '6 ~ 12 개월' }]}
-                    itemWidth="200px"
-                    register={register('longestLoveTime')}
-                />
-                <RadioButtons
-                    items={[{ value: '1TO3YEARS', text: '1 ~ 3 년' }]}
-                    itemWidth="200px"
-                    register={register('longestLoveTime')}
-                />
-                <RadioButtons
-                    items={[{ value: 'OVER3YEARS', text: '3년 이상' }]}
-                    itemWidth="200px"
-                    register={register('longestLoveTime')}
-                />
-                <FormError isShow={isShowErrors && !longestLoveTime}>
-                    가장 긴 연애 기간을 입력해주세요.
-                </FormError>
-            </QuestionContainer>
             <Button
                 css={css`
                     margin-top: 100px;
@@ -837,24 +881,24 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                 `}
                 onClick={() => {
                     let isError = false;
-                    if (!loveCount) {
+                    if ((!loveCount && loveCount !== 0) || loveCount < 0) {
                         !isError && setFocus('loveCount');
                         isError = true;
                     }
-                    if (!isLoveTarget) {
+                    if (!isInLove && loveCount > 0) {
+                        !isError && setFocus('isInLove');
+                        isError = true;
+                    }
+                    if (!isLoveTarget && loveCount > 0) {
                         !isError && setFocus('isLoveTarget');
                         isError = true;
                     }
-                    if (!isInLove) {
-                        !isError && setFocus('isInLove');
+                    if (!longestLoveTime && loveCount > 0) {
+                        !isError && setFocus('longestLoveTime');
                         isError = true;
                     }
                     if (!isMarried) {
                         !isError && setFocus('isMarried');
-                        isError = true;
-                    }
-                    if (!longestLoveTime) {
-                        !isError && setFocus('longestLoveTime');
                         isError = true;
                     }
                     if (isError) {
@@ -899,7 +943,7 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     외동 여부를 입력해주세요.
                 </FormError>
             </QuestionContainer>
-            <QuestionContainer>
+            <QuestionContainer isDisabled={!isOnlyChild || isOnlyChild === '1'}>
                 <QuestionTitle text="모든 형제" />
                 <Input
                     type="number"
@@ -907,12 +951,15 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     register={register('allBrothers', {
                         valueAsNumber: true,
                     })}
+                    disabled={!isOnlyChild || isOnlyChild === '1'}
                 />
-                <FormError isShow={isShowErrors && !allBrothers}>
+                <FormError
+                    isShow={isShowErrors && !allBrothers && isOnlyChild === '0'}
+                >
                     모든 형제 수를 입력해주세요.
                 </FormError>
             </QuestionContainer>
-            <QuestionContainer>
+            <QuestionContainer isDisabled={!isOnlyChild || isOnlyChild === '1'}>
                 <QuestionTitle text="모든 자매" />
                 <Input
                     type="number"
@@ -920,19 +967,25 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     register={register('allSisters', {
                         valueAsNumber: true,
                     })}
+                    disabled={!isOnlyChild || isOnlyChild === '1'}
                 />
-                <FormError isShow={isShowErrors && !allSisters}>
+                <FormError
+                    isShow={isShowErrors && !allSisters && isOnlyChild === '0'}
+                >
                     모든 자매 수를 입력해주세요.
                 </FormError>
             </QuestionContainer>
-            <QuestionContainer>
+            <QuestionContainer isDisabled={!isOnlyChild || isOnlyChild === '1'}>
                 <QuestionTitle text="형제자매 중 몇째" />
                 <Input
                     type="number"
                     placeholder="숫자 입력 (째)"
                     register={register('myOrder', { valueAsNumber: true })}
+                    disabled={!isOnlyChild || isOnlyChild === '1'}
                 />
-                <FormError isShow={isShowErrors && !myOrder}>
+                <FormError
+                    isShow={isShowErrors && !myOrder && isOnlyChild === '0'}
+                >
                     형제자매 중 몇 째 인지 입력해주세요.
                 </FormError>
             </QuestionContainer>
@@ -983,15 +1036,15 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         !isError && setFocus('isOnlyChild');
                         isError = true;
                     }
-                    if (!allBrothers) {
+                    if (!allBrothers && isOnlyChild === '0') {
                         !isError && setFocus('allBrothers');
                         isError = true;
                     }
-                    if (!allSisters) {
+                    if (!allSisters && isOnlyChild === '0') {
                         !isError && setFocus('allSisters');
                         isError = true;
                     }
-                    if (!myOrder) {
+                    if (!myOrder && isOnlyChild === '0') {
                         !isError && setFocus('myOrder');
                         isError = true;
                     }
@@ -1031,9 +1084,9 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth="100px"
                     register={register('leagueOfLegendsPosition')}
                 />
-                <FormError isShow={isShowErrors && !leagueOfLegendsPosition}>
+                {/* <FormError isShow={isShowErrors && !leagueOfLegendsPosition}>
                     롤 포지션을 입력해주세요.
-                </FormError>
+                </FormError> */}
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="롤 티어" />
@@ -1063,9 +1116,9 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     itemWidth={isMobileSize ? '80px' : '100px'}
                     register={register('leagueOfLegendsTier')}
                 />
-                <FormError isShow={isShowErrors && !leagueOfLegendsTier}>
+                {/* <FormError isShow={isShowErrors && !leagueOfLegendsTier}>
                     롤 티어를 입력해주세요.
-                </FormError>
+                </FormError> */}
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="스타크래프트 종족" />
@@ -1075,12 +1128,12 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         { value: 'PROTOSS', text: '프로토스' },
                         { value: 'ZERG', text: '저그' },
                     ]}
-                    itemWidth="100px"
+                    itemWidth="120px"
                     register={register('starcraftRace')}
                 />
-                <FormError isShow={isShowErrors && !starcraftRace}>
+                {/* <FormError isShow={isShowErrors && !starcraftRace}>
                     스타크래프트 종족을 입력해주세요.
-                </FormError>
+                </FormError> */}
             </QuestionContainer>
             <QuestionContainer>
                 <QuestionTitle text="선호 MBTI" />
@@ -1106,9 +1159,9 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                         { value: 'ENTJ', text: 'ENTJ' },
                     ]}
                 />
-                <FormError isShow={isShowErrors && !favoriteMbti}>
+                {/* <FormError isShow={isShowErrors && !favoriteMbti}>
                     선호 MBTI 유형을 입력해주세요.
-                </FormError>
+                </FormError> */}
             </QuestionContainer>
             <Button
                 css={css`
@@ -1118,27 +1171,27 @@ const SurveyPresenter = function ({ onSubmit }: SurveyPresenterProps) {
                     }
                 `}
                 onClick={handleSubmit((data) => {
-                    let isError = false;
-                    if (!leagueOfLegendsPosition) {
-                        !isError && setFocus('leagueOfLegendsPosition');
-                        isError = true;
-                    }
-                    if (!leagueOfLegendsTier) {
-                        !isError && setFocus('leagueOfLegendsTier');
-                        isError = true;
-                    }
-                    if (!starcraftRace) {
-                        !isError && setFocus('starcraftRace');
-                        isError = true;
-                    }
-                    if (!favoriteMbti) {
-                        !isError && setFocus('favoriteMbti');
-                        isError = true;
-                    }
-                    if (isError) {
-                        setIsShowErrors(true);
-                        return;
-                    }
+                    // let isError = false;
+                    // if (!leagueOfLegendsPosition) {
+                    //     !isError && setFocus('leagueOfLegendsPosition');
+                    //     isError = true;
+                    // }
+                    // if (!leagueOfLegendsTier) {
+                    //     !isError && setFocus('leagueOfLegendsTier');
+                    //     isError = true;
+                    // }
+                    // if (!starcraftRace) {
+                    //     !isError && setFocus('starcraftRace');
+                    //     isError = true;
+                    // }
+                    // if (!favoriteMbti) {
+                    //     !isError && setFocus('favoriteMbti');
+                    //     isError = true;
+                    // }
+                    // if (isError) {
+                    //     setIsShowErrors(true);
+                    //     return;
+                    // }
                     setIsShowErrors(false);
                     onSubmit(data);
                 })}
@@ -1185,14 +1238,17 @@ const FormContainer = styled.form`
 
 const QuestionContainer = function ({
     children,
+    isDisabled = false,
 }: {
     children: React.ReactNode;
+    isDisabled?: boolean;
 }) {
     return (
         <div
             css={css`
                 width: 100%;
                 display: flex;
+                opacity: ${isDisabled ? '0.3' : 'none'};
                 flex-direction: column;
                 margin-bottom: 80px;
                 ${isMobile} {
