@@ -1,16 +1,23 @@
-import { initializeApp } from 'firebase/app';
+import { FirebaseApp, initializeApp } from 'firebase/app';
+import { useEffect, useState } from 'react';
+import api from './api';
 
 export const useFirebaseAuth = () => {
-    const firebaseConfig = {
-        apiKey: 'AIzaSyC6Z73JtrHU7OzYU-P5-LLqtJbK1B0VYeQ',
-        authDomain: 'nsm-mbtisurvey2022.firebaseapp.com',
-        projectId: 'nsm-mbtisurvey2022',
-        storageBucket: 'nsm-mbtisurvey2022.appspot.com',
-        messagingSenderId: '789562507530',
-        appId: '1:789562507530:web:ac9252ffc1ee915eaa3af3',
-    };
+    const [app, setApp] = useState<FirebaseApp>();
 
-    const app = initializeApp(firebaseConfig);
+    useEffect(() => {
+        console.log(222);
+        fetchKey();
+    }, []);
+
+    const fetchKey = async () => {
+        const response = await api.get('/api/firebase');
+        const firebaseConfig = response.data;
+        const firebase = initializeApp(firebaseConfig);
+        setApp(firebase);
+
+        console.log(response);
+    };
 
     return {
         app,
