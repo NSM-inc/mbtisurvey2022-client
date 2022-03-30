@@ -9,6 +9,7 @@ const fadeIn = keyframes`
 
 export const Container = styled.div`
     width: 100%;
+    height: 370px;
     position: relative;
     display: flex;
     justify-content: center;
@@ -16,6 +17,7 @@ export const Container = styled.div`
     overflow: hidden;
 
     @media only screen and (max-width: 1000px) {
+        min-height: 434px;
         align-items: center;
         flex-direction: column;
         justify-content: space-between;
@@ -35,6 +37,7 @@ export const Title = styled.div`
 
 export const InputBox = styled.div`
     max-width: 440px;
+    height: 120px;
 
     > div {
         margin-bottom: 32px;
@@ -46,7 +49,7 @@ export const TimerContainer = styled.div`
     @media only screen and (min-width: 1000px) {
         position: absolute;
         top: 0;
-        right: -40px;
+        right: -30px;
     }
 
     @media only screen and (max-width: 1000px) {
@@ -57,7 +60,7 @@ export const TimerContainer = styled.div`
         > div {
             position: absolute;
             top: 0;
-            right: -40px;
+            right: -30px;
         }
 
         > button {
