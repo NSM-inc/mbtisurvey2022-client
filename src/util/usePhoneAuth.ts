@@ -1,23 +1,16 @@
-import { FirebaseApp, initializeApp } from 'firebase/app';
-import { useEffect, useState } from 'react';
-import api from './api';
+import { initializeApp } from 'firebase/app';
 
 export const useFirebaseAuth = () => {
-    const [app, setApp] = useState<FirebaseApp>();
-
-    useEffect(() => {
-        console.log(222);
-        fetchKey();
-    }, []);
-
-    const fetchKey = async () => {
-        const response = await api.get('/api/firebase');
-        const firebaseConfig = response.data;
-        const firebase = initializeApp(firebaseConfig);
-        setApp(firebase);
-
-        console.log(response);
+    const firebaseConfig = {
+        apiKey: process.env.apiKey,
+        authDomain: process.env.authDomain,
+        projectId: process.env.projectId,
+        storageBucket: process.env.storageBucket,
+        messagingSenderId: process.env.messagingSenderId,
+        appId: process.env.appId,
     };
+
+    const app = initializeApp(firebaseConfig);
 
     return {
         app,
