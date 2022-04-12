@@ -1,4 +1,3 @@
-import { useFirebaseAuth } from '../../util/usePhoneAuth';
 import {
     getAuth,
     RecaptchaVerifier,
@@ -11,10 +10,10 @@ import { GetResponse } from '../../models/ResponseDto';
 import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
 import { AuthState } from '../../recoil/atoms';
+import { FirebaseApp } from '@firebase/app';
 
-const AuthContainer = () => {
+const AuthContainer = ({ app }: { app: FirebaseApp }) => {
     const [authState, setAuthState] = useRecoilState(AuthState);
-    const { app } = useFirebaseAuth();
     const auth = getAuth(app);
     const router = useRouter();
 
